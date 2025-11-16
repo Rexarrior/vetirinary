@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Contacts - Veterinary Clinic{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Contacts</li>
+        </ol>
+    </nav>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <h1>Contact Information</h1>
+            
+            {% if contact_info %}
+                <div class="contact-details">
+                    <p><strong>{{ contact_info.clinic_name }}</strong></p>
+                    <p><i class="fas fa-map-marker-alt"></i> {{ contact_info.address }}</p>
+                    <p><i class="fas fa-phone"></i> {{ contact_info.phone }}</p>
+                    <p><i class="fas fa-envelope"></i> {{ contact_info.email }}</p>
+                    <p><i class="fas fa-clock"></i> {{ contact_info.working_hours }}</p>
+                </div>
+                
+                <div class="mt-4">
+                    <a href="{% url 'contacts:contact_us' %}" class="btn btn-primary">Send us a Message</a>
+                </div>
+            {% else %}
+                <p>Contact information will be available soon.</p>
+            {% endif %}
+        </div>
+        
+        <div class="col-md-6">
+            <h2>Find Us</h2>
+            {% if contact_info and contact_info.yandex_map_embed_code %}
+                <div class="map-container">
+                    {{ contact_info.yandex_map_embed_code|safe }}
+                </div>
+            {% else %}
+                <p>Map will be available soon.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

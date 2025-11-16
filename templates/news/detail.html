@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ news.title }} - Veterinary Clinic{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'news:news_list' %}">News</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ news.title }}</li>
+        </ol>
+    </nav>
+    
+    <article>
+        <h1>{{ news.title }}</h1>
+        <p class="text-muted">{{ news.created_at|date:"F d, Y" }}</p>
+        
+        {% if news.image %}
+            <img src="{{ news.image.url }}" class="img-fluid mb-4" alt="{{ news.title }}">
+        {% endif %}
+        
+        <div class="news-content">
+            {{ news.content|linebreaks }}
+        </div>
+    </article>
+    
+    <div class="mt-4">
+        <a href="{% url 'news:news_list' %}" class="btn btn-secondary">Back to News</a>
+    </div>
+</div>
+{% endblock %}

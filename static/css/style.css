@@ -1,0 +1,86 @@
+/* Custom styles for Veterinary Clinic */
+
+/* Hero section */
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/static/images/hero-bg.jpg') center/cover;
+    color: white;
+}
+
+.hero-section h1 {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Card styling */
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Map container */
+.map-container {
+    height: 400px;
+}
+
+.map-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* News content */
+.news-content img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* About description */
+.about-description img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    background-color: #f8f9fa;
+}
+
+/* Contact details */
+.contact-details p {
+    margin-bottom: 0.5rem;
+}
+
+/* Form styling */
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Footer */
+footer {
+    background-color: #f8f9fa;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+    
+    .map-container {
+        height: 300px;
+    }
+}
+
+/* Animation for alerts */
+.alert {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

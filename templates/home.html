@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Veterinary Clinic{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Hero Section -->
+    <section class="hero-section text-center py-5 mb-5 bg-light rounded">
+        <div class="container">
+            <h1 class="display-4 fw-bold">Welcome to Our Veterinary Clinic</h1>
+            <p class="lead">Providing compassionate care for your beloved pets</p>
+            <a href="{% url 'contacts:contact_us' %}" class="btn btn-primary btn-lg">Book an Appointment</a>
+        </div>
+    </section>
+
+    <!-- Services Preview -->
+    <section class="services-preview mb-5">
+        <h2 class="text-center mb-4">Our Services</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Wellness Exams</h5>
+                        <p class="card-text">Regular checkups to keep your pets healthy and happy.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Vaccinations</h5>
+                        <p class="card-text">Protecting your pets from common diseases.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Emergency Care</h5>
+                        <p class="card-text">24/7 emergency services for urgent situations.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Latest News -->
+    <section class="latest-news mb-5">
+        <h2 class="text-center mb-4">Latest News</h2>
+        {% if latest_news %}
+            <div class="row">
+                {% for news in latest_news %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            {% if news.image %}
+                                <img src="{{ news.image.url }}" class="card-img-top" alt="{{ news.title }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ news.title }}</h5>
+                                <p class="card-text">{{ news.content|truncatewords:20 }}</p>
+                                <a href="{% url 'news:news_detail' news.pk %}" class="btn btn-outline-primary">Read More</a>
+                            </div>
+                            <div class="card-footer">
+                                <small class="text-muted">{{ news.created_at|date:"F d, Y" }}</small>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center">No news available at the moment.</p>
+        {% endif %}
+    </section>
+
+    <!-- Contact Info -->
+    <section class="contact-info bg-light p-4 rounded">
+        <h2 class="text-center mb-4">Contact Information</h2>
+        <div class="row">
+            <div class="col-md-6">
+                {% if contact_info %}
+                    <p><strong>{{ contact_info.clinic_name }}</strong></p>
+                    <p><i class="fas fa-map-marker-alt"></i> {{ contact_info.address }}</p>
+                    <p><i class="fas fa-phone"></i> {{ contact_info.phone }}</p>
+                    <p><i class="fas fa-envelope"></i> {{ contact_info.email }}</p>
+                    <p><i class="fas fa-clock"></i> {{ contact_info.working_hours }}</p>
+                {% endif %}
+            </div>
+            <div class="col-md-6 text-md-end">
+                <a href="{% url 'contacts:contact_us' %}" class="btn btn-primary">Send us a Message</a>
+                <a href="{% url 'contacts:contacts' %}" class="btn btn-outline-primary">View Map</a>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
