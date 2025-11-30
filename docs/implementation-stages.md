@@ -312,8 +312,512 @@ Stage 3: Deployment with GitHub Actions
 - Accessibility considerations
 - Performance optimization
 
+#### 10. **Yandex Maps Integration (November 2025)**
+
+**Model Updates (`contacts/models.py`):**
+- Added `latitude` field (DecimalField) for map coordinates
+- Added `longitude` field (DecimalField) for map coordinates  
+- Added `map_zoom` field (IntegerField, default=16) for zoom level
+- Added `has_coordinates()` method to check if coordinates are set
+- Kept `yandex_map_embed_code` as fallback option
+
+**Admin Interface (`contacts/admin.py`):**
+- Structured fieldsets for better UX:
+  - "Основная информация" - clinic details
+  - "Яндекс Карты - координаты" - lat/lng/zoom fields
+  - "Яндекс Карты - альтернативный способ" - embed code fallback
+- Added `has_coordinates` indicator in list display
+
+**Template Integration:**
+- Integrated Yandex Maps JavaScript API 2.1
+- Interactive map with custom placemark (medical icon)
+- Balloon popup with clinic info and "Build route" button
+- **Fixed localization issue:** Used `{% load l10n %}` and `{% localize off %}` to prevent Russian locale from converting decimal points to commas in JavaScript
+- Map displayed on both `/contacts/` and homepage
+- Disabled scroll zoom for better page navigation
+
+**Configured Coordinates:**
+- Address: улица Ленина, 42А, Константиновск, Ростовская область, 347250
+- Latitude: 47.577457
+- Longitude: 41.100736
+- Zoom: 17
+
+**Files Modified:**
+- `contacts/models.py` - Added coordinate fields
+- `contacts/admin.py` - Structured admin with fieldsets
+- `contacts/migrations/0002_*.py` - Migration for new fields
+- `templates/contacts/contacts.html` - Yandex Maps JS integration
+- `templates/home.html` - Map on homepage
+- `static/css/style.css` - Map container styles
+
+---
+
+## Stage 2: Docker Compose with PostgreSQL (Detailed Plan)
+
+### Objective
+Containerize the application using Docker Compose and migrate to PostgreSQL database.
+
+### File Structure to Create
+
+```
+vetirinary/
+├── docker/
+│   ├── django/
+│   │   └── Dockerfile
+│   └── nginx/
+│       ├── Dockerfile
+│       └── nginx.conf
+├── docker-compose.yml
+├── docker-compose.prod.yml
+├── .env.example
+├── .env (gitignored)
+└── entrypoint.sh
+```
+
+### Implementation Tasks
+
+#### 1. Create Dockerfile for Django (`docker/django/Dockerfile`)
+
+```dockerfile
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt gunicorn psycopg2-binary
+
+# Copy project
+COPY . .
+
+# Collect static files
+RUN python manage.py collectstatic --noinput
+
+EXPOSE 8000
+
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "clinic.wsgi:application"]
+```
+
+#### 2. Create docker-compose.yml
+
+```yaml
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: vetclinic_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/django/Dockerfile
+    container_name: vetclinic_web
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    environment:
+      - DEBUG=${DEBUG}
+      - SECRET_KEY=${SECRET_KEY}
+      - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+
+  nginx:
+    build:
+      context: ./docker/nginx
+    container_name: vetclinic_nginx
+    volumes:
+      - static_volume:/app/staticfiles:ro
+      - media_volume:/app/media:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+```
+
+#### 3. Create .env.example
+
+```env
+# Django
+DEBUG=0
+SECRET_KEY=your-super-secret-key-change-in-production
+ALLOWED_HOSTS=localhost,127.0.0.1
+
+# Database
+DB_NAME=vetclinic
+DB_USER=vetclinic_user
+DB_PASSWORD=secure_password_here
+
+# Server
+SERVER_HOST=your-server-ip-or-domain
+```
+
+#### 4. Update Django Settings
+
+Create `clinic/settings_docker.py` or use environment variables:
+- Switch DATABASE to PostgreSQL via `DATABASE_URL`
+- Configure `STATIC_ROOT` and `MEDIA_ROOT`
+- Set `ALLOWED_HOSTS` from environment
+- Disable DEBUG in production
+
+#### 5. Create entrypoint.sh
+
+```bash
+#!/bin/bash
+set -e
+
+# Wait for database
+python manage.py wait_for_db
+
+# Run migrations
+python manage.py migrate --noinput
+
+# Collect static files
+python manage.py collectstatic --noinput
+
+# Start server
+exec "$@"
+```
+
+### Dependencies to Add
+
+```
+# requirements.txt additions
+gunicorn==21.2.0
+psycopg2-binary==2.9.9
+dj-database-url==2.1.0
+python-dotenv==1.0.0
+whitenoise==6.6.0
+```
+
+---
+
+## Stage 3: Deployment with GitHub Actions via SSH (Detailed Plan)
+
+### Objective
+Automated CI/CD pipeline deploying to VPS/server via SSH.
+
+### Architecture
+
+```
+[GitHub Repository]
+        │
+        ▼
+[GitHub Actions CI/CD]
+        │
+        ├── Run tests
+        ├── Build Docker images
+        └── Deploy via SSH
+                │
+                ▼
+[Production Server (VPS)]
+        │
+        ├── Docker Compose
+        ├── Nginx (reverse proxy)
+        ├── PostgreSQL (container)
+        ├── Django + Gunicorn (container)
+        └── Let's Encrypt SSL
+```
+
+### File Structure
+
+```
+.github/
+└── workflows/
+    ├── ci.yml          # Tests on every push/PR
+    └── deploy.yml      # Deploy on push to main
+```
+
+### GitHub Actions Workflows
+
+#### 1. CI Workflow (`.github/workflows/ci.yml`)
+
+```yaml
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_pass
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest pytest-django
+          
+      - name: Run tests
+        env:
+          DATABASE_URL: postgres://test_user:test_pass@localhost:5432/test_db
+          SECRET_KEY: test-secret-key
+          DEBUG: '1'
+        run: |
+          python manage.py migrate
+          python manage.py test
+          
+      - name: Lint with flake8
+        run: |
+          pip install flake8
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+```
+
+#### 2. Deploy Workflow (`.github/workflows/deploy.yml`)
+
+```yaml
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Deploy to server via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            cd /opt/vetclinic
+            
+            # Pull latest code
+            git pull origin main
+            
+            # Update environment
+            cp .env.prod .env
+            
+            # Rebuild and restart containers
+            docker compose down
+            docker compose build --no-cache
+            docker compose up -d
+            
+            # Run migrations
+            docker compose exec -T web python manage.py migrate --noinput
+            
+            # Collect static files
+            docker compose exec -T web python manage.py collectstatic --noinput
+            
+            # Cleanup old images
+            docker image prune -f
+            
+            echo "Deployment completed!"
+```
+
+### GitHub Secrets Required
+
+Configure in: Repository → Settings → Secrets and variables → Actions
+
+| Secret Name | Description |
+|-------------|-------------|
+| `SERVER_HOST` | Server IP or domain |
+| `SERVER_USER` | SSH username (e.g., `deploy`) |
+| `SERVER_PORT` | SSH port (default: 22) |
+| `SSH_PRIVATE_KEY` | Private SSH key for authentication |
+| `SECRET_KEY` | Django secret key |
+| `DB_PASSWORD` | PostgreSQL password |
+
+### Server Setup Script
+
+```bash
+#!/bin/bash
+# Run on server to prepare for deployment
+
+# Create deploy user
+sudo useradd -m -s /bin/bash deploy
+sudo usermod -aG docker deploy
+
+# Create project directory
+sudo mkdir -p /opt/vetclinic
+sudo chown deploy:deploy /opt/vetclinic
+
+# Clone repository
+cd /opt/vetclinic
+git clone https://github.com/YOUR_USERNAME/vetirinary.git .
+
+# Create production env file
+cp .env.example .env.prod
+nano .env.prod  # Edit with production values
+
+# Generate SSH key for GitHub Actions
+ssh-keygen -t ed25519 -C "github-actions-deploy" -f ~/.ssh/github_deploy
+cat ~/.ssh/github_deploy.pub >> ~/.ssh/authorized_keys
+
+# Print private key to add to GitHub Secrets
+echo "Add this to GitHub Secrets as SSH_PRIVATE_KEY:"
+cat ~/.ssh/github_deploy
+```
+
+### Nginx Configuration for Production
+
+```nginx
+# /etc/nginx/sites-available/vetclinic
+server {
+    listen 80;
+    server_name your-domain.com www.your-domain.com;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name your-domain.com www.your-domain.com;
+
+    ssl_certificate /etc/letsencrypt/live/your-domain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/your-domain.com/privkey.pem;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /static/ {
+        alias /opt/vetclinic/staticfiles/;
+        expires 30d;
+    }
+
+    location /media/ {
+        alias /opt/vetclinic/media/;
+        expires 30d;
+    }
+}
+```
+
+### SSL Setup with Let's Encrypt
+
+```bash
+# Install certbot
+sudo apt install certbot python3-certbot-nginx
+
+# Get certificate
+sudo certbot --nginx -d your-domain.com -d www.your-domain.com
+
+# Auto-renewal (already configured by certbot)
+sudo systemctl status certbot.timer
+```
+
+### Deployment Checklist
+
+- [ ] Server provisioned (Ubuntu 22.04 LTS recommended)
+- [ ] Docker and Docker Compose installed
+- [ ] SSH key pair generated for GitHub Actions
+- [ ] GitHub Secrets configured
+- [ ] Domain DNS pointing to server
+- [ ] SSL certificate obtained
+- [ ] Nginx configured as reverse proxy
+- [ ] Firewall configured (ports 80, 443, 22)
+- [ ] Production environment file created
+- [ ] Database backups configured
+
 ### Next Steps
-- Continue with Stage 2: Docker Compose setup
-- Add more sample data for services and reviews
-- Implement additional features as needed
-- Prepare for production deployment
+- [x] Stage 2: Implement Docker Compose configuration ✅
+- [x] Stage 2: Test locally with PostgreSQL ✅
+- [ ] Stage 3: Set up production server
+- [ ] Stage 3: Configure GitHub Actions
+- [ ] Stage 3: Deploy and test
+
+---
+
+## Stage 2: Completed (November 2025)
+
+### Docker Configuration Created
+
+**Files Created:**
+- `docker/django/Dockerfile` - Django container with Python 3.11, Gunicorn
+- `docker/nginx/Dockerfile` - Nginx reverse proxy
+- `docker/nginx/nginx.conf` - Nginx configuration for static files and proxy
+- `docker-compose.yml` - Main orchestration file
+- `entrypoint.sh` - Container startup script with migrations
+- `.env.example` - Environment variables template
+- `.dockerignore` - Docker build exclusions
+- `Makefile` - Convenient commands for Docker management
+
+**Settings Updated:**
+- `clinic/settings.py` - Environment-based configuration (SQLite/PostgreSQL)
+- `requirements.txt` - Added gunicorn, psycopg2-binary, python-dotenv, whitenoise
+
+**Docker Services:**
+- `db` - PostgreSQL 15 Alpine with health checks
+- `web` - Django + Gunicorn (3 workers)
+- `nginx` - Nginx 1.25 Alpine reverse proxy
+
+**Commands Available:**
+```bash
+make build      # Build Docker images
+make up         # Start all services
+make down       # Stop all services
+make logs       # View logs
+make migrate    # Run migrations
+make shell      # Django shell
+make bash       # Container bash
+```
+
+**Access:**
+- Website: http://localhost
+- Admin: http://localhost/admin (admin / admin123)

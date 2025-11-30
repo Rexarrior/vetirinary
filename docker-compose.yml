@@ -1,0 +1,67 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: vetclinic_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${DB_NAME:-vetclinic}
+      - POSTGRES_USER=${DB_USER:-vetclinic_user}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-vetclinic_password}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-vetclinic_user} -d ${DB_NAME:-vetclinic}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - vetclinic_network
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/django/Dockerfile
+    container_name: vetclinic_web
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    environment:
+      - DEBUG=${DEBUG:-0}
+      - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
+      - DB_NAME=${DB_NAME:-vetclinic}
+      - DB_USER=${DB_USER:-vetclinic_user}
+      - DB_PASSWORD=${DB_PASSWORD:-vetclinic_password}
+      - DB_HOST=db
+      - DB_PORT=5432
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-localhost,127.0.0.1}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - vetclinic_network
+
+  nginx:
+    build:
+      context: ./docker/nginx
+    container_name: vetclinic_nginx
+    volumes:
+      - static_volume:/app/staticfiles:ro
+      - media_volume:/app/media:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+    restart: unless-stopped
+    networks:
+      - vetclinic_network
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+
+networks:
+  vetclinic_network:
+    driver: bridge
+
