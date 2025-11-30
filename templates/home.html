@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load contact_filters %}
 
 {% block title %}Ветеринарная клиника - Профессиональная помощь вашим питомцам{% endblock %}
 
@@ -228,7 +229,13 @@
                         </a>
                     </form>
                     <p class="text-center text-muted mt-3 mb-0">
-                        <small><i class="bi bi-telephone"></i> Или позвоните: <a href="tel:+74951234567">+7 (495) 123-45-67</a></small>
+                        <small><i class="bi bi-telephone"></i> Или позвоните: 
+                        {% if contact_info %}
+                        <a href="tel:{{ contact_info.phone|phone_url }}">{{ contact_info.phone }}</a>
+                        {% else %}
+                        <a href="tel:+78631234567">+7 (863) 123-45-67</a>
+                        {% endif %}
+                        </small>
                     </p>
                 </div>
             </div>
@@ -288,9 +295,15 @@
         <h2>Нужна консультация?</h2>
         <p>Позвоните нам или оставьте заявку — мы свяжемся с вами в течение 15 минут</p>
         <div class="d-flex gap-3 justify-content-center flex-wrap">
-            <a href="tel:+74951234567" class="btn btn-white btn-lg">
-                <i class="bi bi-telephone"></i> +7 (495) 123-45-67
+            {% if contact_info %}
+            <a href="tel:{{ contact_info.phone|phone_url }}" class="btn btn-white btn-lg">
+                <i class="bi bi-telephone"></i> {{ contact_info.phone }}
             </a>
+            {% else %}
+            <a href="tel:+78631234567" class="btn btn-white btn-lg">
+                <i class="bi bi-telephone"></i> +7 (863) 123-45-67
+            </a>
+            {% endif %}
             <a href="{% url 'contacts:contact_us' %}" class="btn btn-outline-light btn-lg">
                 <i class="bi bi-envelope"></i> Написать нам
             </a>

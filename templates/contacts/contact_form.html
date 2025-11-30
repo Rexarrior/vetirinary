@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load contact_filters %}
 
 {% block title %}Записаться на приём - Ветеринарная клиника{% endblock %}
 
@@ -99,9 +100,15 @@
                         
                         <div class="text-center">
                             <p class="text-muted mb-2">Или позвоните нам напрямую:</p>
-                            <a href="tel:+74951234567" class="btn btn-outline-primary">
-                                <i class="bi bi-telephone"></i> +7 (495) 123-45-67
+                            {% if contact_info %}
+                            <a href="tel:{{ contact_info.phone|phone_url }}" class="btn btn-outline-primary">
+                                <i class="bi bi-telephone"></i> {{ contact_info.phone }}
                             </a>
+                            {% else %}
+                            <a href="tel:+78631234567" class="btn btn-outline-primary">
+                                <i class="bi bi-telephone"></i> +7 (863) 123-45-67
+                            </a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
