@@ -1,95 +1,369 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Home - Veterinary Clinic{% endblock %}
+{% block title %}Ветеринарная клиника - Профессиональная помощь вашим питомцам{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <!-- Hero Section -->
-    <section class="hero-section text-center py-5 mb-5">
-        <div class="container">
-            <h1 class="display-4 fw-bold">Welcome to Our Veterinary Clinic</h1>
-            <p class="lead">Providing compassionate care for your beloved pets</p>
-            <a href="{% url 'contacts:contact_us' %}" class="btn btn-light btn-lg">Book an Appointment</a>
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7 hero-content">
+                <div class="hero-badges">
+                    <span class="hero-badge">
+                        <i class="bi bi-award"></i> №1 в Москве
+                    </span>
+                    <span class="hero-badge">
+                        <i class="bi bi-clock"></i> Работаем 24/7
+                    </span>
+                    <span class="hero-badge">
+                        <i class="bi bi-shield-check"></i> Лицензия
+                    </span>
+                </div>
+                <h1>Забота о здоровье ваших питомцев — наша миссия</h1>
+                <p class="lead">Современная ветеринарная клиника с опытными специалистами и передовым оборудованием. Мы лечим с любовью!</p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="{% url 'contacts:contact_us' %}" class="btn btn-accent btn-lg">
+                        <i class="bi bi-calendar-check"></i> Записаться на приём
+                    </a>
+                    <a href="{% url 'services:list' %}" class="btn btn-white btn-lg">
+                        <i class="bi bi-grid"></i> Наши услуги
+                    </a>
+                </div>
+            </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Services Preview -->
-    <section class="services-preview mb-5">
-        <h2 class="text-center mb-4 page-header">Our Services</h2>
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="container">
         <div class="row">
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Wellness Exams</h5>
-                        <p class="card-text">Regular checkups to keep your pets healthy and happy.</p>
-                    </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-item">
+                    <div class="stat-number">15+</div>
+                    <div class="stat-label">Лет опыта</div>
                 </div>
             </div>
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Vaccinations</h5>
-                        <p class="card-text">Protecting your pets from common diseases.</p>
-                    </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-item">
+                    <div class="stat-number">20К+</div>
+                    <div class="stat-label">Пациентов</div>
                 </div>
             </div>
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Emergency Care</h5>
-                        <p class="card-text">24/7 emergency services for urgent situations.</p>
-                    </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-item">
+                    <div class="stat-number">12</div>
+                    <div class="stat-label">Врачей</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-item">
+                    <div class="stat-number">4.9</div>
+                    <div class="stat-label">Рейтинг</div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Latest News -->
-    <section class="latest-news mb-5">
-        <h2 class="text-center mb-4 page-header">Latest News</h2>
-        {% if latest_news %}
-            <div class="row">
-                {% for news in latest_news %}
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100">
-                            {% if news.image %}
-                                <img src="{{ news.image.url }}" class="card-img-top" alt="{{ news.title }}">
-                            {% endif %}
-                            <div class="card-body">
-                                <h5 class="card-title">{{ news.title }}</h5>
-                                <p class="card-text">{{ news.content|truncatewords:20 }}</p>
-                                <a href="{% url 'news:news_detail' news.pk %}" class="btn btn-outline-primary">Read More</a>
-                            </div>
-                            <div class="card-footer">
-                                <small class="text-muted">{{ news.created_at|date:"F d, Y" }}</small>
-                            </div>
+<!-- Services Section -->
+<section class="section section-gray">
+    <div class="container">
+        <div class="section-header">
+            <h2>Наши услуги</h2>
+            <p>Полный спектр ветеринарных услуг для здоровья и благополучия ваших питомцев</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="card service-card h-100">
+                    <div class="service-icon">
+                        <i class="bi bi-heart-pulse"></i>
+                    </div>
+                    <h4>Терапия</h4>
+                    <p class="card-text">Диагностика и лечение заболеваний внутренних органов с использованием современных методов</p>
+                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">Подробнее</a>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="card service-card h-100">
+                    <div class="service-icon">
+                        <i class="bi bi-scissors"></i>
+                    </div>
+                    <h4>Хирургия</h4>
+                    <p class="card-text">Плановые и экстренные операции любой сложности в оборудованной операционной</p>
+                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">Подробнее</a>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="card service-card h-100">
+                    <div class="service-icon">
+                        <i class="bi bi-shield-plus"></i>
+                    </div>
+                    <h4>Вакцинация</h4>
+                    <p class="card-text">Защита питомцев от опасных инфекций качественными вакцинами по схеме</p>
+                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">Подробнее</a>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="card service-card h-100">
+                    <div class="service-icon">
+                        <i class="bi bi-clipboard2-pulse"></i>
+                    </div>
+                    <h4>Диагностика</h4>
+                    <p class="card-text">УЗИ, рентген, лабораторные анализы — точная диагностика для правильного лечения</p>
+                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">Подробнее</a>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="card service-card h-100">
+                    <div class="service-icon">
+                        <i class="bi bi-emoji-smile"></i>
+                    </div>
+                    <h4>Стоматология</h4>
+                    <p class="card-text">Чистка зубов, удаление зубного камня, лечение заболеваний полости рта</p>
+                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">Подробнее</a>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="card service-card h-100">
+                    <div class="service-icon">
+                        <i class="bi bi-moon-stars"></i>
+                    </div>
+                    <h4>Стационар</h4>
+                    <p class="card-text">Круглосуточное наблюдение и уход за питомцами после операций и при тяжёлых состояниях</p>
+                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">Подробнее</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-5">
+            <a href="{% url 'services:list' %}" class="btn btn-primary btn-lg">
+                <i class="bi bi-grid-3x3-gap"></i> Все услуги и цены
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Why Us Section -->
+<section class="section section-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h2>Почему выбирают нас?</h2>
+                <p class="text-muted mb-4">Мы создали клинику, в которую хотели бы обратиться сами. Здесь каждый питомец получает внимание и заботу.</p>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h4>Опытные специалисты</h4>
+                        <p>Врачи с опытом от 10 лет, постоянно повышающие квалификацию</p>
+                    </div>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="bi bi-gear"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h4>Современное оборудование</h4>
+                        <p>Диагностика и лечение на оборудовании экспертного класса</p>
+                    </div>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h4>Работаем круглосуточно</h4>
+                        <p>Экстренная помощь 24/7 без выходных и праздников</p>
+                    </div>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="bi bi-wallet2"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h4>Честные цены</h4>
+                        <p>Прозрачное ценообразование без скрытых платежей</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="appointment-form">
+                    <h3><i class="bi bi-calendar-check text-primary"></i> Запись на приём</h3>
+                    <form action="{% url 'contacts:contact_us' %}" method="get">
+                        <div class="mb-3">
+                            <label class="form-label">Ваше имя</label>
+                            <input type="text" class="form-control" placeholder="Как к вам обращаться?">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Телефон</label>
+                            <input type="tel" class="form-control" placeholder="+7 (___) ___-__-__">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Питомец</label>
+                            <select class="form-select">
+                                <option>Выберите вид питомца</option>
+                                <option>Кошка</option>
+                                <option>Собака</option>
+                                <option>Грызун</option>
+                                <option>Птица</option>
+                                <option>Другое</option>
+                            </select>
+                        </div>
+                        <a href="{% url 'contacts:contact_us' %}" class="btn btn-accent w-100 btn-lg">
+                            <i class="bi bi-send"></i> Записаться
+                        </a>
+                    </form>
+                    <p class="text-center text-muted mt-3 mb-0">
+                        <small><i class="bi bi-telephone"></i> Или позвоните: <a href="tel:+74951234567">+7 (495) 123-45-67</a></small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Latest News -->
+{% if latest_news %}
+<section class="section section-gray">
+    <div class="container">
+        <div class="section-header">
+            <h2>Новости клиники</h2>
+            <p>Актуальная информация о жизни клиники и полезные советы для владельцев</p>
+        </div>
+        
+        <div class="row g-4">
+            {% for news in latest_news %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card news-card h-100">
+                    {% if news.image %}
+                    <img src="{{ news.image.url }}" class="card-img-top" alt="{{ news.title }}">
+                    {% else %}
+                    <div class="card-img-top bg-primary-light d-flex align-items-center justify-content-center" style="height: 220px;">
+                        <i class="bi bi-newspaper text-primary" style="font-size: 4rem; opacity: 0.5;"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <div class="news-date mb-2">
+                            <i class="bi bi-calendar3"></i> {{ news.created_at|date:"d.m.Y" }}
+                        </div>
+                        <h5 class="card-title">{{ news.title }}</h5>
+                        <p class="card-text">{{ news.content|truncatewords:20 }}</p>
+                    </div>
+                    <div class="card-footer bg-white border-0">
+                        <a href="{% url 'news:news_detail' news.pk %}" class="btn btn-outline-primary">
+                            Читать далее <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="{% url 'news:news_list' %}" class="btn btn-primary">
+                <i class="bi bi-newspaper"></i> Все новости
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <h2>Нужна консультация?</h2>
+        <p>Позвоните нам или оставьте заявку — мы свяжемся с вами в течение 15 минут</p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="tel:+74951234567" class="btn btn-white btn-lg">
+                <i class="bi bi-telephone"></i> +7 (495) 123-45-67
+            </a>
+            <a href="{% url 'contacts:contact_us' %}" class="btn btn-outline-light btn-lg">
+                <i class="bi bi-envelope"></i> Написать нам
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Info -->
+{% if contact_info %}
+<section class="section section-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-5 mb-4 mb-lg-0">
+                <h2>Как нас найти</h2>
+                <div class="contact-info-card">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="bi bi-geo-alt"></i>
+                        </div>
+                        <div class="contact-content">
+                            <h4>Адрес</h4>
+                            <p>{{ contact_info.address }}</p>
                         </div>
                     </div>
-                {% endfor %}
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="bi bi-telephone"></i>
+                        </div>
+                        <div class="contact-content">
+                            <h4>Телефон</h4>
+                            <a href="tel:{{ contact_info.phone }}">{{ contact_info.phone }}</a>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="bi bi-clock"></i>
+                        </div>
+                        <div class="contact-content">
+                            <h4>Режим работы</h4>
+                            <p>{{ contact_info.working_hours }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="bi bi-envelope"></i>
+                        </div>
+                        <div class="contact-content">
+                            <h4>Email</h4>
+                            <a href="mailto:{{ contact_info.email }}">{{ contact_info.email }}</a>
+                        </div>
+                    </div>
+                </div>
             </div>
-        {% else %}
-            <p class="text-center">No news available at the moment.</p>
-        {% endif %}
-    </section>
-
-    <!-- Contact Info -->
-    <section class="contact-info p-4 rounded wood-accent">
-        <h2 class="text-center mb-4 page-header">Contact Information</h2>
-        <div class="row">
-            <div class="col-md-6">
-                {% if contact_info %}
-                    <p><strong>{{ contact_info.clinic_name }}</strong></p>
-                    <p><i class="fas fa-map-marker-alt"></i> {{ contact_info.address }}</p>
-                    <p><i class="fas fa-phone"></i> {{ contact_info.phone }}</p>
-                    <p><i class="fas fa-envelope"></i> {{ contact_info.email }}</p>
-                    <p><i class="fas fa-clock"></i> {{ contact_info.working_hours }}</p>
+            
+            <div class="col-lg-7">
+                {% if contact_info.yandex_map_embed_code %}
+                <div class="map-container">
+                    {{ contact_info.yandex_map_embed_code|safe }}
+                </div>
+                {% else %}
+                <div class="map-container bg-light d-flex align-items-center justify-content-center">
+                    <div class="text-center text-muted">
+                        <i class="bi bi-map" style="font-size: 4rem;"></i>
+                        <p class="mt-2">Карта скоро появится</p>
+                    </div>
+                </div>
                 {% endif %}
             </div>
-            <div class="col-md-6 text-md-end">
-                <a href="{% url 'contacts:contact_us' %}" class="btn btn-primary">Send us a Message</a>
-                <a href="{% url 'contacts:contacts' %}" class="btn btn-outline-primary">View Map</a>
-            </div>
         </div>
-    </section>
-</div>
+    </div>
+</section>
+{% endif %}
 {% endblock %}

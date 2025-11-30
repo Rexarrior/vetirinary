@@ -1,47 +1,143 @@
 {% extends 'base.html' %}
 
-{% block title %}Contacts - Veterinary Clinic{% endblock %}
+{% block title %}Контакты - Ветеринарная клиника{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Contacts</li>
-        </ol>
-    </nav>
-    
-    <div class="row">
-        <div class="col-md-6">
-            <h1 class="page-header">Contact Information</h1>
-            
-            {% if contact_info %}
-                <div class="contact-details wood-accent">
-                    <p><strong>{{ contact_info.clinic_name }}</strong></p>
-                    <p><i class="fas fa-map-marker-alt"></i> {{ contact_info.address }}</p>
-                    <p><i class="fas fa-phone"></i> {{ contact_info.phone }}</p>
-                    <p><i class="fas fa-envelope"></i> {{ contact_info.email }}</p>
-                    <p><i class="fas fa-clock"></i> {{ contact_info.working_hours }}</p>
-                </div>
+<!-- Page Header -->
+<section class="page-header-section">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-2">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}">Главная</a></li>
+                <li class="breadcrumb-item active">Контакты</li>
+            </ol>
+        </nav>
+        <h1><i class="bi bi-geo-alt"></i> Контакты</h1>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-5 mb-4 mb-lg-0">
+                <h2 class="mb-4">Свяжитесь с нами</h2>
                 
-                <div class="mt-4">
-                    <a href="{% url 'contacts:contact_us' %}" class="btn btn-primary">Send us a Message</a>
+                {% if contact_info %}
+                <div class="contact-info-card mb-4">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="bi bi-building"></i>
+                        </div>
+                        <div class="contact-content">
+                            <h4>Клиника</h4>
+                            <p>{{ contact_info.clinic_name }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="bi bi-geo-alt"></i>
+                        </div>
+                        <div class="contact-content">
+                            <h4>Адрес</h4>
+                            <p>{{ contact_info.address }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="bi bi-telephone"></i>
+                        </div>
+                        <div class="contact-content">
+                            <h4>Телефон</h4>
+                            <a href="tel:{{ contact_info.phone }}">{{ contact_info.phone }}</a>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="bi bi-envelope"></i>
+                        </div>
+                        <div class="contact-content">
+                            <h4>Email</h4>
+                            <a href="mailto:{{ contact_info.email }}">{{ contact_info.email }}</a>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="bi bi-clock"></i>
+                        </div>
+                        <div class="contact-content">
+                            <h4>Режим работы</h4>
+                            <p>{{ contact_info.working_hours }}</p>
+                        </div>
+                    </div>
                 </div>
-            {% else %}
-                <p>Contact information will be available soon.</p>
-            {% endif %}
-        </div>
-        
-        <div class="col-md-6">
-            <h2 class="page-header">Find Us</h2>
-            {% if contact_info and contact_info.yandex_map_embed_code %}
+                {% else %}
+                <div class="contact-info-card mb-4">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="bi bi-telephone"></i>
+                        </div>
+                        <div class="contact-content">
+                            <h4>Телефон</h4>
+                            <a href="tel:+74951234567">+7 (495) 123-45-67</a>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="bi bi-envelope"></i>
+                        </div>
+                        <div class="contact-content">
+                            <h4>Email</h4>
+                            <a href="mailto:info@vetclinic.ru">info@vetclinic.ru</a>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="bi bi-clock"></i>
+                        </div>
+                        <div class="contact-content">
+                            <h4>Режим работы</h4>
+                            <p>Ежедневно: 9:00 - 21:00<br>Экстренная помощь: 24/7</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <a href="{% url 'contacts:contact_us' %}" class="btn btn-primary btn-lg w-100">
+                    <i class="bi bi-envelope"></i> Написать нам
+                </a>
+            </div>
+            
+            <div class="col-lg-7">
+                <h2 class="mb-4">Как нас найти</h2>
+                {% if contact_info and contact_info.yandex_map_embed_code %}
                 <div class="map-container">
                     {{ contact_info.yandex_map_embed_code|safe }}
                 </div>
-            {% else %}
-                <p>Map will be available soon.</p>
-            {% endif %}
+                {% else %}
+                <div class="map-container bg-light d-flex align-items-center justify-content-center">
+                    <div class="text-center text-muted">
+                        <i class="bi bi-map" style="font-size: 4rem;"></i>
+                        <p class="mt-2">Карта скоро появится</p>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h5><i class="bi bi-signpost-2 text-primary"></i> Как добраться</h5>
+                        <p class="mb-2"><strong>На метро:</strong> ст. Примерная, выход №3, 5 минут пешком</p>
+                        <p class="mb-2"><strong>На автобусе:</strong> маршруты 101, 202, остановка "Ветклиника"</p>
+                        <p class="mb-0"><strong>На автомобиле:</strong> бесплатная парковка у клиники</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}

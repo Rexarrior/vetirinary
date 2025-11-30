@@ -1,30 +1,25 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.core.mail import send_mail
 from .models import ContactInfo, ContactSubmission
 from .forms import ContactForm
 
 
 def contacts(request):
+    """Страница контактов с информацией о клинике"""
     contact_info = ContactInfo.objects.first()
     return render(request, 'contacts/contacts.html', {'contact_info': contact_info})
 
 
 def contact_us(request):
+    """Форма обратной связи / записи на приём"""
     contact_info = ContactInfo.objects.first()
     
     if request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():
-            # Save the contact submission
             form.save()
-            
-            # Send email notification (in a real app, you would configure email settings)
-            # For now, we'll just add a success message
-            messages.success(request, 'Thank you for your message. We will contact you soon.')
-            
-            # Redirect to prevent form resubmission
-            return render(request, 'contacts/contact_success.html')
+            messages.success(request, 'Спасибо за обращение! Мы свяжемся с вами в ближайшее время.')
+            return redirect('contacts:contact_success')
     else:
         form = ContactForm()
     
@@ -32,3 +27,8 @@ def contact_us(request):
         'form': form,
         'contact_info': contact_info
     })
+
+
+def contact_success(request):
+    """Страница успешной отправки заявки"""
+    return render(request, 'contacts/contact_success.html')

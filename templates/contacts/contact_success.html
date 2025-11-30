@@ -1,29 +1,33 @@
 {% extends 'base.html' %}
 
-{% block title %}Message Sent - Veterinary Clinic{% endblock %}
+{% block title %}Заявка отправлена - Ветеринарная клиника{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'contacts:contacts' %}">Contacts</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Contact Us</li>
-        </ol>
-    </nav>
-    
-    <div class="row">
-        <div class="col-md-8 mx-auto text-center">
-            <div class="alert alert-success" role="alert">
-                <h2>Thank You!</h2>
-                <p>Your message has been sent successfully. We'll get back to you as soon as possible.</p>
-            </div>
-            
-            <div class="mt-4">
-                <a href="{% url 'home' %}" class="btn btn-primary">Back to Home</a>
-                <a href="{% url 'contacts:contacts' %}" class="btn btn-outline-primary">View Contact Info</a>
+<section class="section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="card text-center">
+                    <div class="card-body p-5">
+                        <div class="mb-4">
+                            <i class="bi bi-check-circle text-success" style="font-size: 5rem;"></i>
+                        </div>
+                        <h2>Заявка отправлена!</h2>
+                        <p class="text-muted mb-4">
+                            Спасибо за обращение. Наш администратор свяжется с вами в ближайшее время для подтверждения записи.
+                        </p>
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'home' %}" class="btn btn-primary btn-lg">
+                                <i class="bi bi-house"></i> На главную
+                            </a>
+                            <a href="{% url 'services:list' %}" class="btn btn-outline-primary">
+                                <i class="bi bi-grid"></i> Посмотреть услуги
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}

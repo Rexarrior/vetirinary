@@ -1,52 +1,152 @@
 {% extends 'base.html' %}
 
-{% block title %}About Us - Veterinary Clinic{% endblock %}
+{% block title %}О клинике - Ветеринарная клиника{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item active" aria-current="page">About Us</li>
-        </ol>
-    </nav>
-    
-    {% if about_content %}
-        <section class="about-content mb-5">
-            <h1 class="page-header">{{ about_content.title }}</h1>
-            
-            {% if about_content.image %}
-                <img src="{{ about_content.image.url }}" class="img-fluid mb-4" alt="{{ about_content.title }}">
-            {% endif %}
-            
-            <div class="about-description">
-                {{ about_content.description|linebreaks }}
+<!-- Page Header -->
+<section class="page-header-section">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-2">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}">Главная</a></li>
+                <li class="breadcrumb-item active">О клинике</li>
+            </ol>
+        </nav>
+        <h1><i class="bi bi-building"></i> О нашей клинике</h1>
+    </div>
+</section>
+
+<!-- About Content -->
+<section class="section">
+    <div class="container">
+        {% if about_content %}
+        <div class="row align-items-center mb-5">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                {% if about_content.image %}
+                <img src="{{ about_content.image.url }}" class="img-fluid rounded-xl shadow-lg" alt="{{ about_content.title }}">
+                {% else %}
+                <div class="bg-primary-light rounded-xl p-5 text-center" style="min-height: 300px;">
+                    <i class="bi bi-hospital text-primary" style="font-size: 8rem; opacity: 0.5;"></i>
+                </div>
+                {% endif %}
             </div>
-        </section>
-    {% endif %}
-    
-    <section class="our-team">
-        <h2 class="page-header">Our Team</h2>
-        {% if veterinarians %}
-            <div class="row">
-                {% for vet in veterinarians %}
-                    <div class="col-md-6 col-lg-4 mb-4">
-                        <div class="card h-100">
-                            {% if vet.photo %}
-                                <img src="{{ vet.photo.url }}" class="card-img-top" alt="{{ vet.name }}">
-                            {% endif %}
-                            <div class="card-body">
-                                <h5 class="card-title">{{ vet.name }}</h5>
-                                <p class="card-text text-muted">{{ vet.position }}</p>
-                                <p class="card-text">{{ vet.bio }}</p>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
+            <div class="col-lg-6">
+                <h2>{{ about_content.title }}</h2>
+                <div class="about-description">
+                    {{ about_content.description|linebreaks }}
+                </div>
             </div>
+        </div>
         {% else %}
-            <p>Information about our team will be available soon.</p>
+        <div class="row align-items-center mb-5">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <div class="bg-primary-light rounded-xl p-5 text-center d-flex align-items-center justify-content-center" style="min-height: 350px;">
+                    <i class="bi bi-heart-pulse text-primary" style="font-size: 8rem; opacity: 0.3;"></i>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <h2>Добро пожаловать в нашу клинику</h2>
+                <p>Мы — современная ветеринарная клиника, работающая с 2010 года. Наша миссия — обеспечить качественную ветеринарную помощь вашим питомцам в комфортной и дружелюбной атмосфере.</p>
+                <p>У нас работают опытные ветеринарные врачи, которые постоянно повышают свою квалификацию и применяют самые современные методы диагностики и лечения.</p>
+                <p>Клиника оснащена современным оборудованием, что позволяет проводить полную диагностику и различные виды лечения на месте.</p>
+            </div>
+        </div>
         {% endif %}
-    </section>
-</div>
+        
+        <!-- Features -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-6 col-lg-3">
+                <div class="card service-card h-100">
+                    <div class="service-icon">
+                        <i class="bi bi-award"></i>
+                    </div>
+                    <h4>15+ лет опыта</h4>
+                    <p class="card-text">Работаем с 2010 года и помогли тысячам питомцев</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card service-card h-100">
+                    <div class="service-icon">
+                        <i class="bi bi-gear"></i>
+                    </div>
+                    <h4>Современное оборудование</h4>
+                    <p class="card-text">УЗИ, рентген, лаборатория — всё в одном месте</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card service-card h-100">
+                    <div class="service-icon">
+                        <i class="bi bi-clock"></i>
+                    </div>
+                    <h4>Работаем 24/7</h4>
+                    <p class="card-text">Экстренная помощь в любое время суток</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card service-card h-100">
+                    <div class="service-icon">
+                        <i class="bi bi-heart"></i>
+                    </div>
+                    <h4>С любовью к животным</h4>
+                    <p class="card-text">Каждый питомец получает заботу и внимание</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Team Section -->
+<section class="section section-gray">
+    <div class="container">
+        <div class="section-header">
+            <h2>Наша команда</h2>
+            <p>Опытные специалисты, которые заботятся о здоровье ваших питомцев</p>
+        </div>
+        
+        {% if veterinarians %}
+        <div class="row g-4">
+            {% for vet in veterinarians %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card team-card h-100">
+                    {% if vet.photo %}
+                    <img src="{{ vet.photo.url }}" class="card-img-top" alt="{{ vet.name }}">
+                    {% else %}
+                    <div class="card-img-top bg-primary-light d-flex align-items-center justify-content-center" style="height: 280px;">
+                        <i class="bi bi-person-circle text-primary" style="font-size: 6rem; opacity: 0.5;"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <p class="team-position">{{ vet.position }}</p>
+                        <h5 class="card-title">{{ vet.name }}</h5>
+                        <p class="card-text">{{ vet.bio|truncatewords:20 }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-people text-muted" style="font-size: 4rem;"></i>
+            <h4 class="mt-3">Информация о команде</h4>
+            <p class="text-muted">Скоро здесь появится информация о наших специалистах</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+    <div class="container">
+        <h2>Доверьте нам здоровье вашего питомца</h2>
+        <p>Запишитесь на приём к нашим специалистам</p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="{% url 'contacts:contact_us' %}" class="btn btn-white btn-lg">
+                <i class="bi bi-calendar-check"></i> Записаться на приём
+            </a>
+            <a href="{% url 'contacts:contacts' %}" class="btn btn-outline-light btn-lg">
+                <i class="bi bi-geo-alt"></i> Как нас найти
+            </a>
+        </div>
+    </div>
+</section>
 {% endblock %}
