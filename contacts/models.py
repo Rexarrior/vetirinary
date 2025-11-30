@@ -2,20 +2,55 @@ from django.db import models
 
 
 class ContactInfo(models.Model):
-    clinic_name = models.CharField(max_length=100)
-    address = models.CharField(max_length=200)
-    phone = models.CharField(max_length=20)
-    email = models.EmailField()
-    working_hours = models.CharField(max_length=200)
-    yandex_map_embed_code = models.TextField(blank=True, help_text="Yandex Maps embed code")
+    clinic_name = models.CharField(max_length=100, verbose_name="Название клиники")
+    address = models.CharField(max_length=200, verbose_name="Адрес")
+    phone = models.CharField(max_length=20, verbose_name="Телефон")
+    email = models.EmailField(verbose_name="Email")
+    working_hours = models.CharField(max_length=200, verbose_name="Часы работы")
+    
+    # Координаты для Яндекс Карт
+    latitude = models.DecimalField(
+        max_digits=9, 
+        decimal_places=6, 
+        null=True, 
+        blank=True,
+        verbose_name="Широта",
+        help_text="Например: 47.578300"
+    )
+    longitude = models.DecimalField(
+        max_digits=9, 
+        decimal_places=6, 
+        null=True, 
+        blank=True,
+        verbose_name="Долгота",
+        help_text="Например: 41.099300"
+    )
+    map_zoom = models.IntegerField(
+        default=16,
+        verbose_name="Масштаб карты",
+        help_text="Значение от 1 до 19 (16-17 для улицы)"
+    )
+    
+    # Оставляем для обратной совместимости
+    yandex_map_embed_code = models.TextField(
+        blank=True, 
+        verbose_name="Embed-код карты",
+        help_text="Альтернативный способ: вставьте HTML-код карты из Яндекс.Конструктора"
+    )
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
-        verbose_name_plural = "Contact Information"
+        verbose_name = "Контактная информация"
+        verbose_name_plural = "Контактная информация"
     
     def __str__(self):
         return self.clinic_name
+    
+    def has_coordinates(self):
+        """Проверяет, заданы ли координаты"""
+        return self.latitude is not None and self.longitude is not None
 
 
 class ContactSubmission(models.Model):

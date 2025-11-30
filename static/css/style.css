@@ -720,12 +720,35 @@ a:hover {
     overflow: hidden;
     box-shadow: var(--shadow);
     height: 400px;
+    background: var(--gray-100);
 }
 
 .map-container iframe {
     width: 100%;
     height: 100%;
     border: none;
+}
+
+/* Яндекс Карты - кастомизация */
+.map-container [class*="ymaps-"] {
+    border-radius: var(--radius-xl);
+}
+
+.map-container .ymaps-2-1-79-map {
+    border-radius: var(--radius-xl);
+}
+
+/* Стили для балуна Яндекс Карт */
+.map-container .ymaps-2-1-79-balloon__content {
+    padding: 10px;
+}
+
+.map-container .ymaps-2-1-79-balloon__close {
+    opacity: 0.7;
+}
+
+.map-container .ymaps-2-1-79-balloon__close:hover {
+    opacity: 1;
 }
 
 /* =====================================================

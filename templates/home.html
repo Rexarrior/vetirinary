@@ -362,7 +362,11 @@
             </div>
             
             <div class="col-lg-7">
-                {% if contact_info.yandex_map_embed_code %}
+                {% if contact_info.has_coordinates %}
+                <!-- Яндекс Карта через JavaScript API -->
+                <div id="yandex-map-home" class="map-container"></div>
+                {% elif contact_info.yandex_map_embed_code %}
+                <!-- Fallback: embed-код -->
                 <div class="map-container">
                     {{ contact_info.yandex_map_embed_code|safe }}
                 </div>
@@ -378,5 +382,46 @@
         </div>
     </div>
 </section>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+{% load l10n %}
+{% if contact_info.has_coordinates %}
+<!-- Яндекс.Карты JavaScript API -->
+<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+<script type="text/javascript">
+    ymaps.ready(initHomeMap);
+    
+    function initHomeMap() {
+        {% localize off %}
+        var coordinates = [{{ contact_info.latitude }}, {{ contact_info.longitude }}];
+        var zoom = {{ contact_info.map_zoom|default:16 }};
+        {% endlocalize %}
+        
+        var myMap = new ymaps.Map("yandex-map-home", {
+            center: coordinates,
+            zoom: zoom,
+            controls: ['zoomControl', 'fullscreenControl']
+        });
+        
+        // Создаём метку
+        var myPlacemark = new ymaps.Placemark(coordinates, {
+            hintContent: '{{ contact_info.clinic_name }}',
+            balloonContentHeader: '<strong>{{ contact_info.clinic_name }}</strong>',
+            balloonContentBody: 
+                '<p style="margin: 8px 0;">📍 {{ contact_info.address }}</p>' +
+                '<p style="margin: 8px 0;">📞 <a href="tel:{{ contact_info.phone|phone_url }}">{{ contact_info.phone }}</a></p>',
+            balloonContentFooter: '<a href="{% url "contacts:contacts" %}" class="btn btn-sm btn-primary">Подробнее</a>'
+        }, {
+            preset: 'islands#redMedicalIcon'
+        });
+        
+        myMap.geoObjects.add(myPlacemark);
+        
+        // Отключаем скролл карты
+        myMap.behaviors.disable('scrollZoom');
+    }
+</script>
 {% endif %}
 {% endblock %}
