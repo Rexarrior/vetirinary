@@ -13,7 +13,7 @@
     </nav>
     
     <article>
-        <h1>{{ news.title }}</h1>
+        <h1 class="page-header">{{ news.title }}</h1>
         <p class="text-muted">{{ news.created_at|date:"F d, Y" }}</p>
         
         {% if news.image %}
@@ -26,7 +26,7 @@
     </article>
     
     <div class="mt-4">
-        <a href="{% url 'news:news_list' %}" class="btn btn-secondary">Back to News</a>
+        <a href="{% url 'news:news_list' %}" class="btn btn-outline-primary">Back to News</a>
     </div>
 </div>
 {% endblock %}

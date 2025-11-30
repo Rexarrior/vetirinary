@@ -5,17 +5,17 @@
 {% block content %}
 <div class="container my-5">
     <!-- Hero Section -->
-    <section class="hero-section text-center py-5 mb-5 bg-light rounded">
+    <section class="hero-section text-center py-5 mb-5">
         <div class="container">
             <h1 class="display-4 fw-bold">Welcome to Our Veterinary Clinic</h1>
             <p class="lead">Providing compassionate care for your beloved pets</p>
-            <a href="{% url 'contacts:contact_us' %}" class="btn btn-primary btn-lg">Book an Appointment</a>
+            <a href="{% url 'contacts:contact_us' %}" class="btn btn-light btn-lg">Book an Appointment</a>
         </div>
     </section>
 
     <!-- Services Preview -->
     <section class="services-preview mb-5">
-        <h2 class="text-center mb-4">Our Services</h2>
+        <h2 class="text-center mb-4 page-header">Our Services</h2>
         <div class="row">
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
@@ -46,7 +46,7 @@
 
     <!-- Latest News -->
     <section class="latest-news mb-5">
-        <h2 class="text-center mb-4">Latest News</h2>
+        <h2 class="text-center mb-4 page-header">Latest News</h2>
         {% if latest_news %}
             <div class="row">
                 {% for news in latest_news %}
@@ -73,8 +73,8 @@
     </section>
 
     <!-- Contact Info -->
-    <section class="contact-info bg-light p-4 rounded">
-        <h2 class="text-center mb-4">Contact Information</h2>
+    <section class="contact-info p-4 rounded wood-accent">
+        <h2 class="text-center mb-4 page-header">Contact Information</h2>
         <div class="row">
             <div class="col-md-6">
                 {% if contact_info %}

@@ -13,7 +13,7 @@
     
     {% if about_content %}
         <section class="about-content mb-5">
-            <h1>{{ about_content.title }}</h1>
+            <h1 class="page-header">{{ about_content.title }}</h1>
             
             {% if about_content.image %}
                 <img src="{{ about_content.image.url }}" class="img-fluid mb-4" alt="{{ about_content.title }}">
@@ -26,7 +26,7 @@
     {% endif %}
     
     <section class="our-team">
-        <h2>Our Team</h2>
+        <h2 class="page-header">Our Team</h2>
         {% if veterinarians %}
             <div class="row">
                 {% for vet in veterinarians %}

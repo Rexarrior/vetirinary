@@ -12,7 +12,7 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand" href="{% url 'home' %}">Veterinary Clinic</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -56,14 +56,14 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-light py-4 mt-5">
+    <footer class="py-4 mt-5">
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
                     <p>&copy; 2025 Veterinary Clinic. All rights reserved.</p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <a href="{% url 'contacts:contact_us' %}" class="btn btn-outline-primary">Contact Us</a>
+                    <a href="{% url 'contacts:contact_us' %}" class="btn btn-light">Contact Us</a>
                 </div>
             </div>
         </div>

@@ -4,7 +4,14 @@
 
 {% block content %}
 <div class="container my-5">
-    <h1 class="mb-4">Latest News</h1>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">News</li>
+        </ol>
+    </nav>
+    
+    <h1 class="mb-4 page-header">Latest News</h1>
     
     {% if news_page %}
         <div class="row">
@@ -17,7 +24,7 @@
                         <div class="card-body">
                             <h5 class="card-title">{{ news.title }}</h5>
                             <p class="card-text">{{ news.content|truncatewords:30 }}</p>
-                            <a href="{% url 'news:news_detail' news.pk %}" class="btn btn-primary">Read More</a>
+                            <a href="{% url 'news:news_detail' news.pk %}" class="btn btn-outline-primary">Read More</a>
                         </div>
                         <div class="card-footer">
                             <small class="text-muted">{{ news.created_at|date:"F d, Y" }}</small>
