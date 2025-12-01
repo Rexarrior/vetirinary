@@ -778,9 +778,10 @@ sudo systemctl status certbot.timer
 ### Next Steps
 - [x] Stage 2: Implement Docker Compose configuration ✅
 - [x] Stage 2: Test locally with PostgreSQL ✅
-- [ ] Stage 3: Set up production server
-- [ ] Stage 3: Configure GitHub Actions
-- [ ] Stage 3: Deploy and test
+- [x] Stage 3: Configure GitHub Actions ✅
+- [x] Stage 3: Create deployment scripts ✅
+- [ ] Stage 3: Set up production server (when ready)
+- [ ] Stage 3: Deploy to production (when server is available)
 
 ---
 
@@ -821,3 +822,136 @@ make bash       # Container bash
 **Access:**
 - Website: http://localhost
 - Admin: http://localhost/admin (admin / admin123)
+
+---
+
+## Stage 3: GitHub Actions & Deployment (November 2025)
+
+### GitHub Actions Workflows Created
+
+**CI Workflow (`.github/workflows/ci.yml`):**
+- Runs on push to `main`/`develop` and pull requests
+- Sets up PostgreSQL service for testing
+- Lints code with flake8
+- Runs Django checks and migrations
+- Executes test suite
+- Builds Docker image to verify Dockerfile
+
+**Deploy Workflow (`.github/workflows/deploy.yml`):**
+- Triggered on push to `main` or manually
+- Runs tests before deployment
+- Connects to server via SSH
+- Pulls latest code, rebuilds containers
+- Runs migrations and collects static files
+- Cleans up old Docker images
+
+### Production Configuration
+
+**Files Created:**
+- `.github/workflows/ci.yml` - CI pipeline
+- `.github/workflows/deploy.yml` - Deployment pipeline
+- `docker-compose.prod.yml` - Production Docker Compose
+- `docker/nginx/nginx.prod.conf` - Production Nginx config
+- `.env.prod.example` - Production environment template
+- `scripts/server-setup.sh` - Server initialization script
+- `scripts/backup-db.sh` - Database backup script
+- `scripts/restore-db.sh` - Database restore script
+
+### GitHub Secrets Required
+
+Configure in: Repository → Settings → Secrets and variables → Actions
+
+| Secret | Description |
+|--------|-------------|
+| `SERVER_HOST` | Server IP or domain |
+| `SERVER_USER` | SSH username (default: `deploy`) |
+| `SERVER_PORT` | SSH port (default: `22`) |
+| `SSH_PRIVATE_KEY` | Private SSH key for authentication |
+
+### Server Setup Instructions
+
+1. **Provision server** (Ubuntu 22.04 LTS recommended)
+
+2. **Run setup script:**
+```bash
+wget https://raw.githubusercontent.com/YOUR_USER/vetirinary/main/scripts/server-setup.sh
+chmod +x server-setup.sh
+sudo ./server-setup.sh
+```
+
+3. **Clone repository:**
+```bash
+sudo -u deploy git clone https://github.com/YOUR_USER/vetirinary.git /opt/vetclinic
+```
+
+4. **Configure environment:**
+```bash
+cd /opt/vetclinic
+sudo -u deploy cp .env.prod.example .env.prod
+sudo -u deploy nano .env.prod  # Edit with production values
+```
+
+5. **Generate SSH key for GitHub Actions:**
+```bash
+sudo -u deploy ssh-keygen -t ed25519 -C "github-actions" -f /home/deploy/.ssh/github_deploy -N ""
+cat /home/deploy/.ssh/github_deploy.pub >> /home/deploy/.ssh/authorized_keys
+cat /home/deploy/.ssh/github_deploy  # Add this to GitHub Secrets
+```
+
+6. **Set up SSL:**
+```bash
+sudo certbot --nginx -d your-domain.com
+```
+
+7. **Start application:**
+```bash
+cd /opt/vetclinic
+sudo -u deploy docker-compose -f docker-compose.prod.yml up -d
+```
+
+### Backup Configuration
+
+Add to crontab for automatic daily backups at 3 AM:
+```bash
+sudo -u deploy crontab -e
+# Add line:
+0 3 * * * /opt/vetclinic/scripts/backup-db.sh
+```
+
+### Architecture
+
+```
+[GitHub Repository]
+        │
+        ▼
+[GitHub Actions CI/CD]
+        │
+        ├── Run tests (PostgreSQL)
+        ├── Lint code
+        └── Deploy via SSH
+                │
+                ▼
+[Production Server (VPS)]
+        │
+        ├── Nginx (host) → SSL termination
+        │       │
+        │       ▼
+        ├── Docker Compose
+        │   ├── nginx (container) → reverse proxy
+        │   ├── web (Django + Gunicorn)
+        │   └── db (PostgreSQL)
+        │
+        └── Certbot (SSL auto-renewal)
+```
+
+### Deployment Checklist
+
+- [x] GitHub Actions workflows created
+- [x] Production Docker Compose configured
+- [x] Server setup script created
+- [x] Backup/restore scripts created
+- [ ] Server provisioned
+- [ ] GitHub Secrets configured
+- [ ] Domain DNS configured
+- [ ] SSL certificate obtained
+- [ ] First deployment completed
