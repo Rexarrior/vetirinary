@@ -170,3 +170,13 @@ if not DEBUG:
     X_FRAME_OPTIONS = "DENY"
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_SECURE = True
+    
+    # Trust the X-Forwarded-Proto header from reverse proxy
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    
+    # CSRF trusted origins (for HTTPS behind proxy)
+    CSRF_TRUSTED_ORIGINS = [
+        f"https://{host.strip()}" 
+        for host in os.getenv("ALLOWED_HOSTS", "").split(",") 
+        if host.strip() and host.strip() not in ("localhost", "127.0.0.1")
+    ]
