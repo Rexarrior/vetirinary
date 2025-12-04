@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "about",
     "services",
     "reviews",
+    "chatbot",
 ]
 
 MIDDLEWARE = [
@@ -161,6 +162,10 @@ MEDIA_ROOT = BASE_DIR / "media"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# OpenRouter API Configuration for AI Chatbot
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 
 
 # Security settings for production

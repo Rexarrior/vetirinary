@@ -955,3 +955,93 @@ sudo -u deploy crontab -e
 - [ ] Domain DNS configured
 - [ ] SSL certificate obtained
 - [ ] First deployment completed
+
+---
+
+## AI Chatbot Assistant (December 2025)
+
+### Overview
+
+Added an AI-powered chat assistant widget available on all website pages. The assistant can:
+- Answer questions about the clinic (address, hours, services, prices)
+- Provide information about veterinarians
+- Answer general veterinary questions
+- Search the internet for veterinary topics (with restrictions)
+
+### Technology Stack
+
+- **LLM**: z-ai/glm-4.5-air:free via OpenRouter API
+- **Framework**: LangChain + LangGraph for agentic capabilities
+- **Search**: DuckDuckGo Search (restricted to veterinary topics)
+- **Frontend**: Vanilla JavaScript chat widget with session storage
+
+### Files Created
+
+**New Django App: `chatbot/`**
+- `chatbot/prompts.py` - System prompts with restrictions
+- `chatbot/tools.py` - Custom tools for clinic data and search
+- `chatbot/agent.py` - LangChain/LangGraph agent configuration
+- `chatbot/views.py` - API endpoint for chat
+- `chatbot/urls.py` - URL routing
+
+**Frontend:**
+- `static/js/chat-widget.js` - Chat widget JavaScript
+- `static/css/chat-widget.css` - Widget styling
+
+**Modified:**
+- `templates/base.html` - Include widget on all pages
+- `clinic/settings.py` - Add chatbot app and OpenRouter config
+- `clinic/urls.py` - Add API route `/api/chatbot/chat/`
+- `requirements.txt` - Add langchain, langchain-openai, duckduckgo-search
+
+### Configuration
+
+Set the `OPENROUTER_API_KEY` environment variable:
+```bash
+export OPENROUTER_API_KEY=your-api-key-here
+```
+
+Get your API key at: https://openrouter.ai/keys
+
+### Features
+
+1. **Floating Chat Widget**
+   - Available on all pages (bottom-right corner)
+   - Responsive design (mobile-friendly)
+   - Session-based message history
+   - Quick action buttons for common questions
+
+2. **AI Capabilities**
+   - Access to clinic database (contacts, services, veterinarians)
+   - DuckDuckGo search for veterinary topics
+   - Strict topic restrictions (veterinary only)
+   - Critical analysis of search results
+
+3. **Safety Features**
+   - Only discusses veterinary topics
+   - Never provides diagnoses or prescriptions
+   - Always recommends consulting a real veterinarian
+   - Search restricted to veterinary keywords
+
+### API Endpoint
+
+**POST** `/api/chatbot/chat/`
+
+Request body:
+```json
+{
+    "message": "User message",
+    "history": [
+        {"role": "user", "content": "..."},
+        {"role": "assistant", "content": "..."}
+    ]
+}
+```
+
+Response:
+```json
+{
+    "success": true,
+    "response": "Assistant response"
+}
+```

@@ -27,4 +27,5 @@ urlpatterns = [
     path("news/", include("news.urls")),
     path("contacts/", include("contacts.urls")),
     path("about/", include("about.urls")),
+    path("api/chatbot/", include("chatbot.urls")),
 ]
