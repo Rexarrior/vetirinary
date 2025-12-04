@@ -258,6 +258,24 @@
     font-weight: 600;
 }
 
+.chat-message-text a {
+    color: var(--chat-primary);
+    text-decoration: underline;
+    word-break: break-all;
+}
+
+.chat-message-text a:hover {
+    color: var(--chat-primary-dark);
+}
+
+.chat-message.user .chat-message-text a {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.chat-message.user .chat-message-text a:hover {
+    color: white;
+}
+
 .chat-message-time {
     font-size: 11px;
     color: var(--chat-text-secondary);

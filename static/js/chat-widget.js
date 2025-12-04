@@ -264,6 +264,10 @@ class VetChatWidget {
                    .replace(/</g, '&lt;')
                    .replace(/>/g, '&gt;');
         
+        // Convert URLs to clickable links
+        const urlRegex = /(https?:\/\/[^\s<]+)/g;
+        text = text.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+        
         // Convert markdown-like formatting
         // Bold: **text** or __text__
         text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
