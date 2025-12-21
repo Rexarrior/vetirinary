@@ -1,0 +1,12 @@
+# Agent Rules & Guidelines
+
+## Memory Bank Protocol
+- **CRITICAL**: Before starting any task, you MUST read all files in the `docs/memory_bank/` directory. This ensures you have the full context of the project's goals, architecture, and current state.
+- **Maintenance**: After completing a significant task or change, you MUST update the relevant files in the Memory Bank (especially `activeContext.md` and `progress.md`) to reflect the new state of the project.
+
+## General Principles
+- **Context First**: Always prioritize understanding the existing codebase and documentation before suggesting or implementing changes.
+- **Rich Aesthetics**: When working on frontend tasks, ensure the design is modern, premium, and visually stunning (as per system instructions).
+- **Semantic HTML**: Always use semantic HTML5 elements and follow SEO best practices.
+- **Clean Code**: Follow PEP 8 for Python/Django and modern best practices for JavaScript and CSS.
+- **Documentation**: Keep the documentation (especially in `docs/`) in sync with the implementation.
