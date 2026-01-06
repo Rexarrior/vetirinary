@@ -59,3 +59,14 @@ class Service(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.price} руб."
+class ServicesPageText(models.Model):
+    """Текстовые блоки для страницы 'Услуги и цены'"""
+    header_title = models.CharField(max_length=200, default="Наши услуги", verbose_name="Заголовок страницы")
+    header_subtitle = models.TextField(default="Полный спектр ветеринарных услуг для здоровья и благополучия ваших питомцев", verbose_name="Подзаголовок страницы")
+    
+    class Meta:
+        verbose_name = "Тексты страницы 'Услуги'"
+        verbose_name_plural = "Тексты страницы 'Услуги'"
+
+    def __str__(self):
+        return "Тексты страницы 'Услуги'"

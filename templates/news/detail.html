@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ news.title }} - Ветеринарная клиника{% endblock %}
+{% block title %}{{ news.title }} - {{ site_settings.site_title|default:'Ветеринарная клиника' }}{% endblock %}
 
 {% block content %}
 <!-- Page Header -->
@@ -8,8 +8,10 @@
     <div class="container">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-2">
-                <li class="breadcrumb-item"><a href="{% url 'home' %}">Главная</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'news:news_list' %}">Новости</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'home' %}">{{ common_phrases.nav_home|default:'Главная'
+                        }}</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'news:news_list' %}">{{
+                        common_phrases.nav_news|default:'Новости' }}</a></li>
                 <li class="breadcrumb-item active">{{ news.title|truncatewords:5 }}</li>
             </ol>
         </nav>
@@ -26,7 +28,8 @@
             <div class="col-lg-8">
                 <article class="card">
                     {% if news.image %}
-                    <img src="{{ news.image.url }}" class="card-img-top" alt="{{ news.title }}" style="height: auto; max-height: 500px; object-fit: cover;">
+                    <img src="{{ news.image.url }}" class="card-img-top" alt="{{ news.title }}"
+                        style="height: auto; max-height: 500px; object-fit: cover;">
                     {% endif %}
                     <div class="card-body p-4 p-lg-5">
                         <div class="news-content">
@@ -34,13 +37,13 @@
                         </div>
                     </div>
                 </article>
-                
+
                 <div class="d-flex justify-content-between align-items-center mt-4">
                     <a href="{% url 'news:news_list' %}" class="btn btn-outline-primary">
-                        <i class="bi bi-arrow-left"></i> Все новости
+                        <i class="bi bi-arrow-left"></i> {{ common_phrases.all_news_btn|default:'Все новости' }}
                     </a>
                     <div>
-                        <span class="text-muted me-2">Поделиться:</span>
+                        <span class="text-muted me-2">{{ common_phrases.share_label|default:'Поделиться:' }}</span>
                         <a href="#" class="btn btn-sm btn-outline-secondary"><i class="bi bi-telegram"></i></a>
                         <a href="#" class="btn btn-sm btn-outline-secondary"><i class="bi bi-whatsapp"></i></a>
                     </div>
@@ -53,11 +56,12 @@
 <!-- CTA -->
 <section class="cta-section">
     <div class="container">
-        <h2>Нужна консультация?</h2>
-        <p>Запишитесь на приём к нашим специалистам</p>
+        <h2>{{ common_phrases.cta_consultation_title|default:'Нужна консультация?' }}</h2>
+        <p>{{ common_phrases.cta_consultation_subtitle|default:'Запишитесь на приём к нашим специалистам' }}</p>
         <a href="{% url 'contacts:contact_us' %}" class="btn btn-white btn-lg">
-            <i class="bi bi-calendar-check"></i> Записаться на приём
+            <i class="bi bi-calendar-check"></i> {{ common_phrases.book_appointment_btn|default:'Записаться на приём' }}
         </a>
     </div>
 </section>
+
 {% endblock %}

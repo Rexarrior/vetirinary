@@ -2,7 +2,8 @@
 {% load static %}
 {% load contact_filters %}
 
-{% block title %}Ветеринарная клиника - Профессиональная помощь вашим питомцам{% endblock %}
+{% block title %}{{ site_settings.site_title|default:'Ветеринарная клиника' }} - {{
+hero_section.title|default:'Профессиональная помощь вашим питомцам' }}{% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
@@ -12,23 +13,26 @@
             <div class="col-lg-7 hero-content">
                 <div class="hero-badges">
                     <span class="hero-badge">
-                        <i class="bi bi-geo-alt"></i> Ветеринарная клиника в Константиновске
+                        <i class="bi bi-geo-alt"></i> {{ hero_section.badge_location|default:'Ветеринарная клиника в
+                        Константиновске' }}
                     </span>
                     <span class="hero-badge">
-                        <i class="bi bi-clock"></i> Работаем 24/7
+                        <i class="bi bi-clock"></i> {{ hero_section.badge_work_hours|default:'Работаем 24/7' }}
                     </span>
                     <span class="hero-badge">
-                        <i class="bi bi-shield-check"></i> Лицензия
+                        <i class="bi bi-shield-check"></i> {{ hero_section.badge_license|default:'Лицензия' }}
                     </span>
                 </div>
-                <h1>Забота о здоровье ваших питомцев — наша миссия</h1>
-                <p class="lead">Современная ветеринарная клиника с опытными специалистами и передовым оборудованием. Мы лечим с любовью!</p>
+                <h1>{{ hero_section.title|default:'Забота о здоровье ваших питомцев — наша миссия' }}</h1>
+                <p class="lead">{{ hero_section.lead_text|default:'Современная ветеринарная клиника с опытными
+                    специалистами и передовым оборудованием. Мы лечим с любовью!' }}</p>
                 <div class="d-flex gap-3 flex-wrap">
                     <a href="{% url 'contacts:contact_us' %}" class="btn btn-accent btn-lg">
-                        <i class="bi bi-calendar-check"></i> Записаться на приём
+                        <i class="bi bi-calendar-check"></i> {{ hero_section.button_primary_text|default:'Записаться на
+                        приём' }}
                     </a>
                     <a href="{% url 'services:list' %}" class="btn btn-white btn-lg">
-                        <i class="bi bi-grid"></i> Наши услуги
+                        <i class="bi bi-grid"></i> {{ hero_section.button_secondary_text|default:'Наши услуги' }}
                     </a>
                 </div>
             </div>
@@ -40,6 +44,16 @@
 <section class="stats-section">
     <div class="container">
         <div class="row">
+            {% if stats %}
+            {% for stat in stats %}
+            <div class="col-6 col-md-3">
+                <div class="stat-item">
+                    <div class="stat-number">{{ stat.number }}</div>
+                    <div class="stat-label">{{ stat.label }}</div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
             <div class="col-6 col-md-3">
                 <div class="stat-item">
                     <div class="stat-number">15+</div>
@@ -64,6 +78,7 @@
                     <div class="stat-label">Рейтинг</div>
                 </div>
             </div>
+            {% endif %}
         </div>
     </div>
 </section>
@@ -72,10 +87,11 @@
 <section class="section section-gray">
     <div class="container">
         <div class="section-header">
-            <h2>Наши услуги</h2>
-            <p>Полный спектр ветеринарных услуг для здоровья и благополучия ваших питомцев</p>
+            <h2>{{ common_phrases.services_title|default:'Наши услуги' }}</h2>
+            <p>{{ common_phrases.services_subtitle|default:'Полный спектр ветеринарных услуг для здоровья и благополучия
+                ваших питомцев' }}</p>
         </div>
-        
+
         <div class="row g-4">
             <div class="col-md-6 col-lg-4">
                 <div class="card service-card h-100">
@@ -83,11 +99,13 @@
                         <i class="bi bi-heart-pulse"></i>
                     </div>
                     <h4>Терапия</h4>
-                    <p class="card-text">Диагностика и лечение заболеваний внутренних органов с использованием современных методов</p>
-                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">Подробнее</a>
+                    <p class="card-text">Диагностика и лечение заболеваний внутренних органов с использованием
+                        современных методов</p>
+                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">{{
+                        common_phrases.more_details|default:'Подробнее' }}</a>
                 </div>
             </div>
-            
+
             <div class="col-md-6 col-lg-4">
                 <div class="card service-card h-100">
                     <div class="service-icon">
@@ -95,10 +113,11 @@
                     </div>
                     <h4>Хирургия</h4>
                     <p class="card-text">Плановые и экстренные операции любой сложности в оборудованной операционной</p>
-                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">Подробнее</a>
+                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">{{
+                        common_phrases.more_details|default:'Подробнее' }}</a>
                 </div>
             </div>
-            
+
             <div class="col-md-6 col-lg-4">
                 <div class="card service-card h-100">
                     <div class="service-icon">
@@ -106,21 +125,24 @@
                     </div>
                     <h4>Вакцинация</h4>
                     <p class="card-text">Защита питомцев от опасных инфекций качественными вакцинами по схеме</p>
-                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">Подробнее</a>
+                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">{{
+                        common_phrases.more_details|default:'Подробнее' }}</a>
                 </div>
             </div>
-            
+
             <div class="col-md-6 col-lg-4">
                 <div class="card service-card h-100">
                     <div class="service-icon">
                         <i class="bi bi-clipboard2-pulse"></i>
                     </div>
                     <h4>Диагностика</h4>
-                    <p class="card-text">УЗИ, рентген, лабораторные анализы — точная диагностика для правильного лечения</p>
-                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">Подробнее</a>
+                    <p class="card-text">УЗИ, рентген, лабораторные анализы — точная диагностика для правильного лечения
+                    </p>
+                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">{{
+                        common_phrases.more_details|default:'Подробнее' }}</a>
                 </div>
             </div>
-            
+
             <div class="col-md-6 col-lg-4">
                 <div class="card service-card h-100">
                     <div class="service-icon">
@@ -128,25 +150,28 @@
                     </div>
                     <h4>Стоматология</h4>
                     <p class="card-text">Чистка зубов, удаление зубного камня, лечение заболеваний полости рта</p>
-                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">Подробнее</a>
+                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">{{
+                        common_phrases.more_details|default:'Подробнее' }}</a>
                 </div>
             </div>
-            
+
             <div class="col-md-6 col-lg-4">
                 <div class="card service-card h-100">
                     <div class="service-icon">
                         <i class="bi bi-moon-stars"></i>
                     </div>
                     <h4>Стационар</h4>
-                    <p class="card-text">Круглосуточное наблюдение и уход за питомцами после операций и при тяжёлых состояниях</p>
-                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">Подробнее</a>
+                    <p class="card-text">Круглосуточное наблюдение и уход за питомцами после операций и при тяжёлых
+                        состояниях</p>
+                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">{{
+                        common_phrases.more_details|default:'Подробнее' }}</a>
                 </div>
             </div>
         </div>
-        
+
         <div class="text-center mt-5">
             <a href="{% url 'services:list' %}" class="btn btn-primary btn-lg">
-                <i class="bi bi-grid-3x3-gap"></i> Все услуги и цены
+                <i class="bi bi-grid-3x3-gap"></i> {{ common_phrases.all_services_btn|default:'Все услуги и цены' }}
             </a>
         </div>
     </div>
@@ -157,9 +182,23 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0">
-                <h2>Почему выбирают нас?</h2>
-                <p class="text-muted mb-4">Мы создали клинику, в которую хотели бы обратиться сами. Здесь каждый питомец получает внимание и заботу.</p>
-                
+                <h2>{{ about_text.header_title|default:'Почему выбирают нас?' }}</h2>
+                <p class="text-muted mb-4">{{ about_text.header_subtitle|default:'Мы создали клинику, в которую хотели
+                    бы обратиться сами. Здесь каждый питомец получает внимание и заботу.' }}</p>
+
+                {% if features %}
+                {% for feature in features %}
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="bi {{ feature.icon }}"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h4>{{ feature.title }}</h4>
+                        <p>{{ feature.description }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
                 <div class="feature-item">
                     <div class="feature-icon">
                         <i class="bi bi-people"></i>
@@ -169,7 +208,7 @@
                         <p>Врачи с опытом от 10 лет, постоянно повышающие квалификацию</p>
                     </div>
                 </div>
-                
+
                 <div class="feature-item">
                     <div class="feature-icon">
                         <i class="bi bi-gear"></i>
@@ -179,7 +218,7 @@
                         <p>Диагностика и лечение на оборудовании экспертного класса</p>
                     </div>
                 </div>
-                
+
                 <div class="feature-item">
                     <div class="feature-icon">
                         <i class="bi bi-clock-history"></i>
@@ -189,7 +228,7 @@
                         <p>Экстренная помощь 24/7 без выходных и праздников</p>
                     </div>
                 </div>
-                
+
                 <div class="feature-item">
                     <div class="feature-icon">
                         <i class="bi bi-wallet2"></i>
@@ -199,42 +238,45 @@
                         <p>Прозрачное ценообразование без скрытых платежей</p>
                     </div>
                 </div>
+                {% endif %}
             </div>
-            
+
             <div class="col-lg-6">
                 <div class="appointment-form">
-                    <h3><i class="bi bi-calendar-check text-primary"></i> Запись на приём</h3>
+                    <h3><i class="bi bi-calendar-check text-primary"></i> {{
+                        common_phrases.appointment_form_title|default:'Запись на приём' }}</h3>
                     <form action="{% url 'contacts:contact_us' %}" method="get">
                         <div class="mb-3">
-                            <label class="form-label">Ваше имя</label>
-                            <input type="text" class="form-control" placeholder="Как к вам обращаться?">
+                            <label class="form-label">{{ common_phrases.label_name|default:'Ваше имя' }}</label>
+                            <input type="text" class="form-control"
+                                placeholder="{{ common_phrases.placeholder_name|default:'Как к вам обращаться?' }}">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Телефон</label>
+                            <label class="form-label">{{ common_phrases.label_phone|default:'Телефон' }}</label>
                             <input type="tel" class="form-control" placeholder="+7 (___) ___-__-__">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Питомец</label>
+                            <label class="form-label">{{ common_phrases.label_pet|default:'Питомец' }}</label>
                             <select class="form-select">
-                                <option>Выберите вид питомца</option>
-                                <option>Кошка</option>
-                                <option>Собака</option>
-                                <option>Грызун</option>
-                                <option>Птица</option>
-                                <option>Другое</option>
+                                <option>{{ common_phrases.option_select_pet|default:'Выберите вид питомца' }}</option>
+                                <option>{{ common_phrases.pet_cat|default:'Кошка' }}</option>
+                                <option>{{ common_phrases.pet_dog|default:'Собака' }}</option>
+                                <option>{{ common_phrases.pet_rodent|default:'Грызун' }}</option>
+                                <option>{{ common_phrases.pet_bird|default:'Птица' }}</option>
+                                <option>{{ common_phrases.pet_other|default:'Другое' }}</option>
                             </select>
                         </div>
                         <a href="{% url 'contacts:contact_us' %}" class="btn btn-accent w-100 btn-lg">
-                            <i class="bi bi-send"></i> Записаться
+                            <i class="bi bi-send"></i> {{ common_phrases.btn_book|default:'Записаться' }}
                         </a>
                     </form>
                     <p class="text-center text-muted mt-3 mb-0">
-                        <small><i class="bi bi-telephone"></i> Или позвоните: 
-                        {% if contact_info %}
-                        <a href="tel:{{ contact_info.phone|phone_url }}">{{ contact_info.phone }}</a>
-                        {% else %}
-                        <a href="tel:+78631234567">+7 (863) 123-45-67</a>
-                        {% endif %}
+                        <small><i class="bi bi-telephone"></i> {{ common_phrases.or_call|default:'Или позвоните:' }}
+                            {% if contact_info %}
+                            <a href="tel:{{ contact_info.phone|phone_url }}">{{ contact_info.phone }}</a>
+                            {% else %}
+                            <a href="tel:+78631234567">+7 (863) 123-45-67</a>
+                            {% endif %}
                         </small>
                     </p>
                 </div>
@@ -248,10 +290,11 @@
 <section class="section section-gray">
     <div class="container">
         <div class="section-header">
-            <h2>Новости клиники</h2>
-            <p>Актуальная информация о жизни клиники и полезные советы для владельцев</p>
+            <h2>{{ common_phrases.news_title|default:'Новости клиники' }}</h2>
+            <p>{{ common_phrases.news_subtitle|default:'Актуальная информация о жизни клиники и полезные советы для
+                владельцев' }}</p>
         </div>
-        
+
         <div class="row g-4">
             {% for news in latest_news %}
             <div class="col-md-6 col-lg-4">
@@ -259,7 +302,8 @@
                     {% if news.image %}
                     <img src="{{ news.image.url }}" class="card-img-top" alt="{{ news.title }}">
                     {% else %}
-                    <div class="card-img-top bg-primary-light d-flex align-items-center justify-content-center" style="height: 220px;">
+                    <div class="card-img-top bg-primary-light d-flex align-items-center justify-content-center"
+                        style="height: 220px;">
                         <i class="bi bi-newspaper text-primary" style="font-size: 4rem; opacity: 0.5;"></i>
                     </div>
                     {% endif %}
@@ -272,17 +316,17 @@
                     </div>
                     <div class="card-footer bg-white border-0">
                         <a href="{% url 'news:news_detail' news.pk %}" class="btn btn-outline-primary">
-                            Читать далее <i class="bi bi-arrow-right"></i>
+                            {{ common_phrases.read_more|default:'Читать далее' }} <i class="bi bi-arrow-right"></i>
                         </a>
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
-        
+
         <div class="text-center mt-4">
             <a href="{% url 'news:news_list' %}" class="btn btn-primary">
-                <i class="bi bi-newspaper"></i> Все новости
+                <i class="bi bi-newspaper"></i> {{ common_phrases.all_news_btn|default:'Все новости' }}
             </a>
         </div>
     </div>
@@ -292,8 +336,9 @@
 <!-- CTA Section -->
 <section class="cta-section">
     <div class="container">
-        <h2>Нужна консультация?</h2>
-        <p>Позвоните нам или оставьте заявку — мы свяжемся с вами в течение 15 минут</p>
+        <h2>{{ common_phrases.cta_title|default:'Нужна консультация?' }}</h2>
+        <p>{{ common_phrases.cta_subtitle|default:'Позвоните нам или оставьте заявку — мы свяжемся с вами в течение 15
+            минут' }}</p>
         <div class="d-flex gap-3 justify-content-center flex-wrap">
             {% if contact_info %}
             <a href="tel:{{ contact_info.phone|phone_url }}" class="btn btn-white btn-lg">
@@ -305,7 +350,7 @@
             </a>
             {% endif %}
             <a href="{% url 'contacts:contact_us' %}" class="btn btn-outline-light btn-lg">
-                <i class="bi bi-envelope"></i> Написать нам
+                <i class="bi bi-envelope"></i> {{ common_phrases.write_to_us|default:'Написать нам' }}
             </a>
         </div>
     </div>
@@ -317,50 +362,50 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-5 mb-4 mb-lg-0">
-                <h2>Как нас найти</h2>
+                <h2>{{ common_phrases.find_us_title|default:'Как нас найти' }}</h2>
                 <div class="contact-info-card">
                     <div class="contact-item">
                         <div class="contact-icon">
                             <i class="bi bi-geo-alt"></i>
                         </div>
                         <div class="contact-content">
-                            <h4>Адрес</h4>
+                            <h4>{{ common_phrases.label_address|default:'Адрес' }}</h4>
                             <p>{{ contact_info.address }}</p>
                         </div>
                     </div>
-                    
+
                     <div class="contact-item">
                         <div class="contact-icon">
                             <i class="bi bi-telephone"></i>
                         </div>
                         <div class="contact-content">
-                            <h4>Телефон</h4>
+                            <h4>{{ common_phrases.label_phone|default:'Телефон' }}</h4>
                             <a href="tel:{{ contact_info.phone }}">{{ contact_info.phone }}</a>
                         </div>
                     </div>
-                    
+
                     <div class="contact-item">
                         <div class="contact-icon">
                             <i class="bi bi-clock"></i>
                         </div>
                         <div class="contact-content">
-                            <h4>Режим работы</h4>
+                            <h4>{{ common_phrases.label_working_hours|default:'Режим работы' }}</h4>
                             <p>{{ contact_info.working_hours }}</p>
                         </div>
                     </div>
-                    
+
                     <div class="contact-item">
                         <div class="contact-icon">
                             <i class="bi bi-envelope"></i>
                         </div>
                         <div class="contact-content">
-                            <h4>Email</h4>
+                            <h4>{{ common_phrases.label_email|default:'Email' }}</h4>
                             <a href="mailto:{{ contact_info.email }}">{{ contact_info.email }}</a>
                         </div>
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-lg-7">
                 {% if contact_info.has_coordinates %}
                 <!-- Яндекс Карта через JavaScript API -->
@@ -374,7 +419,7 @@
                 <div class="map-container bg-light d-flex align-items-center justify-content-center">
                     <div class="text-center text-muted">
                         <i class="bi bi-map" style="font-size: 4rem;"></i>
-                        <p class="mt-2">Карта скоро появится</p>
+                        <p class="mt-2">{{ common_phrases.map_coming_soon|default:'Карта скоро появится' }}</p>
                     </div>
                 </div>
                 {% endif %}
@@ -383,6 +428,7 @@
     </div>
 </section>
 {% endif %}
+
 {% endblock %}
 
 {% block extra_js %}
@@ -392,35 +438,35 @@
 <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
 <script type="text/javascript">
     ymaps.ready(initHomeMap);
-    
+
     function initHomeMap() {
         {% localize off %}
-        var coordinates = [{{ contact_info.latitude }}, {{ contact_info.longitude }}];
-        var zoom = {{ contact_info.map_zoom|default:16 }};
-        {% endlocalize %}
-        
-        var myMap = new ymaps.Map("yandex-map-home", {
-            center: coordinates,
-            zoom: zoom,
-            controls: ['zoomControl', 'fullscreenControl']
-        });
-        
-        // Создаём метку
-        var myPlacemark = new ymaps.Placemark(coordinates, {
-            hintContent: '{{ contact_info.clinic_name }}',
-            balloonContentHeader: '<strong>{{ contact_info.clinic_name }}</strong>',
-            balloonContentBody: 
-                '<p style="margin: 8px 0;">📍 {{ contact_info.address }}</p>' +
-                '<p style="margin: 8px 0;">📞 <a href="tel:{{ contact_info.phone|phone_url }}">{{ contact_info.phone }}</a></p>',
-            balloonContentFooter: '<a href="{% url "contacts:contacts" %}" class="btn btn-sm btn-primary">Подробнее</a>'
-        }, {
-            preset: 'islands#redMedicalIcon'
-        });
-        
-        myMap.geoObjects.add(myPlacemark);
-        
-        // Отключаем скролл карты
-        myMap.behaviors.disable('scrollZoom');
+        var coordinates = [{{ contact_info.latitude }}, { { contact_info.longitude } }];
+    var zoom = {{ contact_info.map_zoom|default: 16 }};
+    {% endlocalize %}
+
+    var myMap = new ymaps.Map("yandex-map-home", {
+        center: coordinates,
+        zoom: zoom,
+        controls: ['zoomControl', 'fullscreenControl']
+    });
+
+    // Создаём метку
+    var myPlacemark = new ymaps.Placemark(coordinates, {
+        hintContent: '{{ contact_info.clinic_name }}',
+        balloonContentHeader: '<strong>{{ contact_info.clinic_name }}</strong>',
+        balloonContentBody:
+            '<p style="margin: 8px 0;">📍 {{ contact_info.address }}</p>' +
+            '<p style="margin: 8px 0;">📞 <a href="tel:{{ contact_info.phone|phone_url }}">{{ contact_info.phone }}</a></p>',
+        balloonContentFooter: '<a href="{% url "contacts:contacts" %}" class="btn btn-sm btn-primary">Подробнее</a>'
+    }, {
+        preset: 'islands#redMedicalIcon'
+    });
+
+    myMap.geoObjects.add(myPlacemark);
+
+    // Отключаем скролл карты
+    myMap.behaviors.disable('scrollZoom');
     }
 </script>
 {% endif %}

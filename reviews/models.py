@@ -32,3 +32,14 @@ class Review(models.Model):
 
     def __str__(self):
         return f"Отзыв от {self.author_name} - {self.rating}★"
+class ReviewsPageText(models.Model):
+    """Текстовые блоки для страницы 'Отзывы'"""
+    header_title = models.CharField(max_length=200, default="Отзывы наших клиентов", verbose_name="Заголовок страницы")
+    header_subtitle = models.TextField(default="Мы ценим доверие каждого владельца и любовь каждого питомца", verbose_name="Подзаголовок страницы")
+    
+    class Meta:
+        verbose_name = "Тексты страницы 'Отзывы'"
+        verbose_name_plural = "Тексты страницы 'Отзывы'"
+
+    def __str__(self):
+        return "Тексты страницы 'Отзывы'"

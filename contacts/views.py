@@ -1,18 +1,24 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import ContactInfo, ContactSubmission
+from .models import ContactInfo, ContactSubmission, ContactsPageText
 from .forms import ContactForm
 
 
 def contacts(request):
     """Страница контактов с информацией о клинике"""
     contact_info = ContactInfo.objects.first()
-    return render(request, 'contacts/contacts.html', {'contact_info': contact_info})
+    contacts_text = ContactsPageText.objects.first()
+    
+    return render(request, 'contacts/contacts.html', {
+        'contact_info': contact_info,
+        'contacts_text': contacts_text,
+    })
 
 
 def contact_us(request):
     """Форма обратной связи / записи на приём"""
     contact_info = ContactInfo.objects.first()
+    contacts_text = ContactsPageText.objects.first()
     
     if request.method == 'POST':
         form = ContactForm(request.POST)
@@ -25,7 +31,8 @@ def contact_us(request):
     
     return render(request, 'contacts/contact_form.html', {
         'form': form,
-        'contact_info': contact_info
+        'contact_info': contact_info,
+        'contacts_text': contacts_text,
     })
 
 

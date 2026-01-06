@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "services",
     "reviews",
     "chatbot",
+    "core",
 ]
 
 MIDDLEWARE = [
@@ -77,6 +78,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "clinic.context_processors.contact_info",
+                "clinic.context_processors.site_content",
             ],
         },
     },

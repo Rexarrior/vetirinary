@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
-{% block title %}Новости - Ветеринарная клиника{% endblock %}
+{% block title %}{{ news_text.header_title|default:'Новости' }} - {{ site_settings.site_title|default:'Ветеринарная
+клиника' }}{% endblock %}
 
 {% block content %}
 <!-- Page Header -->
@@ -8,11 +9,12 @@
     <div class="container">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-2">
-                <li class="breadcrumb-item"><a href="{% url 'home' %}">Главная</a></li>
-                <li class="breadcrumb-item active">Новости</li>
+                <li class="breadcrumb-item"><a href="{% url 'home' %}">{{ common_phrases.nav_home|default:'Главная'
+                        }}</a></li>
+                <li class="breadcrumb-item active">{{ common_phrases.nav_news|default:'Новости' }}</li>
             </ol>
         </nav>
-        <h1><i class="bi bi-newspaper"></i> Новости клиники</h1>
+        <h1><i class="bi bi-newspaper"></i> {{ news_text.header_title|default:'Новости клиники' }}</h1>
     </div>
 </section>
 
@@ -26,7 +28,8 @@
                     {% if news.image %}
                     <img src="{{ news.image.url }}" class="card-img-top" alt="{{ news.title }}">
                     {% else %}
-                    <div class="card-img-top bg-primary-light d-flex align-items-center justify-content-center" style="height: 220px;">
+                    <div class="card-img-top bg-primary-light d-flex align-items-center justify-content-center"
+                        style="height: 220px;">
                         <i class="bi bi-newspaper text-primary" style="font-size: 4rem; opacity: 0.5;"></i>
                     </div>
                     {% endif %}
@@ -39,59 +42,60 @@
                     </div>
                     <div class="card-footer bg-white border-0 pt-0">
                         <a href="{% url 'news:news_detail' news.pk %}" class="btn btn-outline-primary">
-                            Читать далее <i class="bi bi-arrow-right"></i>
+                            {{ common_phrases.read_more|default:'Читать далее' }} <i class="bi bi-arrow-right"></i>
                         </a>
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
-        
+
         <!-- Pagination -->
         {% if news_page.has_other_pages %}
-        <nav aria-label="Навигация по страницам" class="mt-5">
+        <nav aria-label="{{ common_phrases.pagination_label|default:'Навигация по страницам' }}" class="mt-5">
             <ul class="pagination justify-content-center">
                 {% if news_page.has_previous %}
                 <li class="page-item">
                     <a class="page-link" href="?page={{ news_page.previous_page_number }}">
-                        <i class="bi bi-chevron-left"></i> Назад
+                        <i class="bi bi-chevron-left"></i> {{ common_phrases.pagination_back|default:'Назад' }}
                     </a>
                 </li>
                 {% endif %}
-                
+
                 {% for num in news_page.paginator.page_range %}
-                    {% if news_page.number == num %}
-                    <li class="page-item active">
-                        <span class="page-link">{{ num }}</span>
-                    </li>
-                    {% elif num > news_page.number|add:'-3' and num < news_page.number|add:'3' %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                {% if news_page.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+                {% elif num > news_page.number|add:'-3' and num < news_page.number|add:'3' %} <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
                     </li>
                     {% endif %}
-                {% endfor %}
-                
-                {% if news_page.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ news_page.next_page_number }}">
-                        Вперёд <i class="bi bi-chevron-right"></i>
-                    </a>
-                </li>
-                {% endif %}
+                    {% endfor %}
+
+                    {% if news_page.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ news_page.next_page_number }}">
+                            {{ common_phrases.pagination_forward|default:'Вперёд' }} <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
             </ul>
         </nav>
         {% endif %}
-        
+
         {% else %}
         <div class="text-center py-5">
             <i class="bi bi-newspaper text-muted" style="font-size: 4rem;"></i>
-            <h4 class="mt-3">Новостей пока нет</h4>
-            <p class="text-muted">Скоро здесь появятся интересные статьи и новости клиники</p>
+            <h4 class="mt-3">{{ common_phrases.no_news_title|default:'Новостей пока нет' }}</h4>
+            <p class="text-muted">{{ common_phrases.no_news_subtitle|default:'Скоро здесь появятся интересные статьи и
+                новости клиники' }}</p>
             <a href="{% url 'home' %}" class="btn btn-primary">
-                <i class="bi bi-house"></i> На главную
+                <i class="bi bi-house"></i> {{ common_phrases.back_to_home|default:'На главную' }}
             </a>
         </div>
         {% endif %}
     </div>
 </section>
+
 {% endblock %}

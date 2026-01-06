@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
-{% block title %}О клинике - Ветеринарная клиника{% endblock %}
+{% block title %}{{ about_text.header_title|default:'О клинике' }} - {{ site_settings.site_title|default:'Ветеринарная
+клиника' }}{% endblock %}
 
 {% block content %}
 <!-- Page Header -->
@@ -8,11 +9,12 @@
     <div class="container">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-2">
-                <li class="breadcrumb-item"><a href="{% url 'home' %}">Главная</a></li>
-                <li class="breadcrumb-item active">О клинике</li>
+                <li class="breadcrumb-item"><a href="{% url 'home' %}">{{ common_phrases.nav_home|default:'Главная'
+                        }}</a></li>
+                <li class="breadcrumb-item active">{{ common_phrases.nav_about|default:'О клинике' }}</li>
             </ol>
         </nav>
-        <h1><i class="bi bi-building"></i> О нашей клинике</h1>
+        <h1><i class="bi bi-building"></i> {{ about_text.header_title|default:'О нашей клинике' }}</h1>
     </div>
 </section>
 
@@ -23,7 +25,8 @@
         <div class="row align-items-center mb-5">
             <div class="col-lg-6 mb-4 mb-lg-0">
                 {% if about_content.image %}
-                <img src="{{ about_content.image.url }}" class="img-fluid rounded-xl shadow-lg" alt="{{ about_content.title }}">
+                <img src="{{ about_content.image.url }}" class="img-fluid rounded-xl shadow-lg"
+                    alt="{{ about_content.title }}">
                 {% else %}
                 <div class="bg-primary-light rounded-xl p-5 text-center" style="min-height: 300px;">
                     <i class="bi bi-hospital text-primary" style="font-size: 8rem; opacity: 0.5;"></i>
@@ -40,21 +43,35 @@
         {% else %}
         <div class="row align-items-center mb-5">
             <div class="col-lg-6 mb-4 mb-lg-0">
-                <div class="bg-primary-light rounded-xl p-5 text-center d-flex align-items-center justify-content-center" style="min-height: 350px;">
+                <div class="bg-primary-light rounded-xl p-5 text-center d-flex align-items-center justify-content-center"
+                    style="min-height: 350px;">
                     <i class="bi bi-heart-pulse text-primary" style="font-size: 8rem; opacity: 0.3;"></i>
                 </div>
             </div>
             <div class="col-lg-6">
-                <h2>Добро пожаловать в нашу клинику</h2>
-                <p>Мы — современная ветеринарная клиника, работающая с 2010 года. Наша миссия — обеспечить качественную ветеринарную помощь вашим питомцам в комфортной и дружелюбной атмосфере.</p>
-                <p>У нас работают опытные ветеринарные врачи, которые постоянно повышают свою квалификацию и применяют самые современные методы диагностики и лечения.</p>
-                <p>Клиника оснащена современным оборудованием, что позволяет проводить полную диагностику и различные виды лечения на месте.</p>
+                <h2>{{ about_text.header_title|default:'Добро пожаловать в нашу клинику' }}</h2>
+                <p>{{ about_text.header_subtitle|default:'Мы — современная ветеринарная клиника, работающая с 2010 года.
+                    Наша миссия — обеспечить качественную ветеринарную помощь вашим питомцам в комфортной и дружелюбной
+                    атмосфере.' }}</p>
             </div>
         </div>
         {% endif %}
-        
+
         <!-- Features -->
         <div class="row g-4 mb-5">
+            {% if features %}
+            {% for feature in features %}
+            <div class="col-md-6 col-lg-3">
+                <div class="card service-card h-100">
+                    <div class="service-icon">
+                        <i class="bi {{ feature.icon }}"></i>
+                    </div>
+                    <h4>{{ feature.title }}</h4>
+                    <p class="card-text">{{ feature.description }}</p>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
             <div class="col-md-6 col-lg-3">
                 <div class="card service-card h-100">
                     <div class="service-icon">
@@ -64,33 +81,8 @@
                     <p class="card-text">Работаем с 2010 года и помогли тысячам питомцев</p>
                 </div>
             </div>
-            <div class="col-md-6 col-lg-3">
-                <div class="card service-card h-100">
-                    <div class="service-icon">
-                        <i class="bi bi-gear"></i>
-                    </div>
-                    <h4>Современное оборудование</h4>
-                    <p class="card-text">УЗИ, рентген, лаборатория — всё в одном месте</p>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3">
-                <div class="card service-card h-100">
-                    <div class="service-icon">
-                        <i class="bi bi-clock"></i>
-                    </div>
-                    <h4>Работаем 24/7</h4>
-                    <p class="card-text">Экстренная помощь в любое время суток</p>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3">
-                <div class="card service-card h-100">
-                    <div class="service-icon">
-                        <i class="bi bi-heart"></i>
-                    </div>
-                    <h4>С любовью к животным</h4>
-                    <p class="card-text">Каждый питомец получает заботу и внимание</p>
-                </div>
-            </div>
+            <!-- ... other fallback features ... -->
+            {% endif %}
         </div>
     </div>
 </section>
@@ -99,10 +91,11 @@
 <section class="section section-gray">
     <div class="container">
         <div class="section-header">
-            <h2>Наша команда</h2>
-            <p>Опытные специалисты, которые заботятся о здоровье ваших питомцев</p>
+            <h2>{{ about_text.team_title|default:'Наша команда' }}</h2>
+            <p>{{ about_text.team_subtitle|default:'Опытные специалисты, которые заботятся о здоровье ваших питомцев' }}
+            </p>
         </div>
-        
+
         {% if veterinarians %}
         <div class="row g-4">
             {% for vet in veterinarians %}
@@ -111,7 +104,8 @@
                     {% if vet.photo %}
                     <img src="{{ vet.photo.url }}" class="card-img-top" alt="{{ vet.name }}">
                     {% else %}
-                    <div class="card-img-top bg-primary-light d-flex align-items-center justify-content-center" style="height: 280px;">
+                    <div class="card-img-top bg-primary-light d-flex align-items-center justify-content-center"
+                        style="height: 280px;">
                         <i class="bi bi-person-circle text-primary" style="font-size: 6rem; opacity: 0.5;"></i>
                     </div>
                     {% endif %}
@@ -127,8 +121,9 @@
         {% else %}
         <div class="text-center py-5">
             <i class="bi bi-people text-muted" style="font-size: 4rem;"></i>
-            <h4 class="mt-3">Информация о команде</h4>
-            <p class="text-muted">Скоро здесь появится информация о наших специалистах</p>
+            <h4 class="mt-3">{{ common_phrases.team_info_title|default:'Информация о команде' }}</h4>
+            <p class="text-muted">{{ common_phrases.team_info_subtitle|default:'Скоро здесь появится информация о наших
+                специалистах' }}</p>
         </div>
         {% endif %}
     </div>
@@ -137,16 +132,17 @@
 <!-- CTA -->
 <section class="cta-section">
     <div class="container">
-        <h2>Доверьте нам здоровье вашего питомца</h2>
-        <p>Запишитесь на приём к нашим специалистам</p>
+        <h2>{{ common_phrases.cta_title|default:'Доверьте нам здоровье вашего питомца' }}</h2>
+        <p>{{ common_phrases.cta_subtitle|default:'Запишитесь на приём к нашим специалистам' }}</p>
         <div class="d-flex gap-3 justify-content-center flex-wrap">
             <a href="{% url 'contacts:contact_us' %}" class="btn btn-white btn-lg">
-                <i class="bi bi-calendar-check"></i> Записаться на приём
+                <i class="bi bi-calendar-check"></i> {{ common_phrases.book_appointment|default:'Записаться на приём' }}
             </a>
             <a href="{% url 'contacts:contacts' %}" class="btn btn-outline-light btn-lg">
-                <i class="bi bi-geo-alt"></i> Как нас найти
+                <i class="bi bi-geo-alt"></i> {{ common_phrases.find_us_btn|default:'Как нас найти' }}
             </a>
         </div>
     </div>
 </section>
+
 {% endblock %}

@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
-{% block title %}Заявка отправлена - Ветеринарная клиника{% endblock %}
+{% block title %}{{ common_phrases.success_page_title|default:'Заявка отправлена' }} - {{
+site_settings.site_title|default:'Ветеринарная клиника' }}{% endblock %}
 
 {% block content %}
 <section class="section">
@@ -12,16 +13,18 @@
                         <div class="mb-4">
                             <i class="bi bi-check-circle text-success" style="font-size: 5rem;"></i>
                         </div>
-                        <h2>Заявка отправлена!</h2>
+                        <h2>{{ common_phrases.success_title|default:'Заявка отправлена!' }}</h2>
                         <p class="text-muted mb-4">
-                            Спасибо за обращение. Наш администратор свяжется с вами в ближайшее время для подтверждения записи.
+                            {{ common_phrases.success_message|default:'Спасибо за обращение. Наш администратор свяжется
+                            с вами в ближайшее время для подтверждения записи.' }}
                         </p>
                         <div class="d-grid gap-2">
                             <a href="{% url 'home' %}" class="btn btn-primary btn-lg">
-                                <i class="bi bi-house"></i> На главную
+                                <i class="bi bi-house"></i> {{ common_phrases.back_to_home|default:'На главную' }}
                             </a>
                             <a href="{% url 'services:list' %}" class="btn btn-outline-primary">
-                                <i class="bi bi-grid"></i> Посмотреть услуги
+                                <i class="bi bi-grid"></i> {{ common_phrases.view_services_btn|default:'Посмотреть
+                                услуги' }}
                             </a>
                         </div>
                     </div>
@@ -30,4 +33,5 @@
         </div>
     </div>
 </section>
+
 {% endblock %}

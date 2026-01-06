@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ContactInfo, ContactSubmission
+from .models import ContactInfo, ContactSubmission, ContactsPageText
 
 @admin.register(ContactInfo)
 class ContactInfoAdmin(admin.ModelAdmin):
@@ -36,3 +36,10 @@ class ContactSubmissionAdmin(admin.ModelAdmin):
     list_filter = ('created_at',)
     search_fields = ('name', 'email', 'subject')
     readonly_fields = ('created_at',)
+
+@admin.register(ContactsPageText)
+class ContactsPageTextAdmin(admin.ModelAdmin):
+    def has_add_permission(self, request):
+        if self.model.objects.exists():
+            return False
+        return super().has_add_permission(request)

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ category.name }} - Ветеринарная клиника{% endblock %}
+{% block title %}{{ category.name }} - {{ site_settings.site_title|default:'Ветеринарная клиника' }}{% endblock %}
 
 {% block content %}
 <!-- Page Header -->
@@ -8,8 +8,10 @@
     <div class="container">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-2">
-                <li class="breadcrumb-item"><a href="{% url 'home' %}">Главная</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'services:list' %}">Услуги</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'home' %}">{{ common_phrases.nav_home|default:'Главная'
+                        }}</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'services:list' %}">{{
+                        common_phrases.nav_services|default:'Услуги' }}</a></li>
                 <li class="breadcrumb-item active">{{ category.name }}</li>
             </ol>
         </nav>
@@ -26,7 +28,7 @@
             </div>
         </div>
         {% endif %}
-        
+
         <div class="price-list rounded-xl overflow-hidden">
             {% for service in services %}
             <div class="price-item">
@@ -34,7 +36,8 @@
                     <span class="price-name">
                         {{ service.name }}
                         {% if service.is_popular %}
-                        <span class="badge bg-accent text-white ms-2">Популярно</span>
+                        <span class="badge bg-accent text-white ms-2">{{
+                            common_phrases.popular_badge|default:'Популярно' }}</span>
                         {% endif %}
                     </span>
                     {% if service.description %}
@@ -43,26 +46,27 @@
                 </div>
                 <div class="text-end">
                     <span class="price-value">
-                        {% if service.price_note %}{{ service.price_note }} {% endif %}{{ service.price|floatformat:0 }} ₽
+                        {% if service.price_note %}{{ service.price_note }} {% endif %}{{ service.price|floatformat:0 }}
+                        ₽
                     </span>
                 </div>
             </div>
             {% empty %}
             <div class="price-item">
-                <span class="text-muted">Услуги скоро появятся</span>
+                <span class="text-muted">{{ common_phrases.no_services_message|default:'Услуги скоро появятся' }}</span>
             </div>
             {% endfor %}
         </div>
-        
+
         <div class="mt-4">
             <a href="{% url 'services:list' %}" class="btn btn-outline-primary">
-                <i class="bi bi-arrow-left"></i> Все услуги
+                <i class="bi bi-arrow-left"></i> {{ common_phrases.all_services_btn|default:'Все услуги' }}
             </a>
             <a href="{% url 'contacts:contact_us' %}" class="btn btn-primary">
-                <i class="bi bi-calendar-check"></i> Записаться
+                <i class="bi bi-calendar-check"></i> {{ common_phrases.book_appointment_btn|default:'Записаться' }}
             </a>
         </div>
     </div>
 </section>
-{% endblock %}
 
+{% endblock %}

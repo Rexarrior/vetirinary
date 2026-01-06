@@ -5,8 +5,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Ветеринарная клиника - профессиональная помощь вашим питомцам. Опытные врачи, современное оборудование, круглосуточная помощь.">
-    <title>{% block title %}Ветеринарная клиника{% endblock %}</title>
+    <meta name="description" content="{{ site_settings.meta_description|default:'Ветеринарная клиника - профессиональная помощь вашим питомцам. Опытные врачи, современное оборудование, круглосуточная помощь.' }}">
+    <title>{% block title %}{{ site_settings.site_title|default:'Ветеринарная клиника' }}{% endblock %}</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,7 +31,7 @@
     <!-- Top Bar -->
     <div class="emergency-banner">
         <div class="container">
-            <i class="bi bi-clock"></i> Круглосуточная экстренная помощь: 
+            <i class="bi bi-clock"></i> {{ common_phrases.emergency_help|default:'Круглосуточная экстренная помощь:' }} 
             {% if contact_info %}
             <a href="tel:{{ contact_info.phone|phone_url }}"><strong>{{ contact_info.phone }}</strong></a>
             {% else %}
@@ -45,7 +45,7 @@
         <div class="container">
             <a class="navbar-brand" href="{% url 'home' %}">
                 <i class="bi bi-heart-pulse brand-icon"></i>
-                ВетКлиника
+                {{ site_settings.site_title|default:'ВетКлиника' }}
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -56,32 +56,32 @@
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
                         <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">
-                            <i class="bi bi-house-door"></i> Главная
+                            <i class="bi bi-house-door"></i> {{ common_phrases.nav_home|default:'Главная' }}
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if 'services' in request.path %}active{% endif %}" href="{% url 'services:list' %}">
-                            <i class="bi bi-grid-3x3-gap"></i> Услуги и цены
+                            <i class="bi bi-grid-3x3-gap"></i> {{ common_phrases.nav_services|default:'Услуги и цены' }}
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if 'about' in request.path %}active{% endif %}" href="{% url 'about:about' %}">
-                            <i class="bi bi-people"></i> О клинике
+                            <i class="bi bi-people"></i> {{ common_phrases.nav_about|default:'О клинике' }}
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if 'reviews' in request.path %}active{% endif %}" href="{% url 'reviews:list' %}">
-                            <i class="bi bi-chat-heart"></i> Отзывы
+                            <i class="bi bi-chat-heart"></i> {{ common_phrases.nav_reviews|default:'Отзывы' }}
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if 'news' in request.path %}active{% endif %}" href="{% url 'news:news_list' %}">
-                            <i class="bi bi-newspaper"></i> Новости
+                            <i class="bi bi-newspaper"></i> {{ common_phrases.nav_news|default:'Новости' }}
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if 'contacts' in request.path %}active{% endif %}" href="{% url 'contacts:contacts' %}">
-                            <i class="bi bi-geo-alt"></i> Контакты
+                            <i class="bi bi-geo-alt"></i> {{ common_phrases.nav_contacts|default:'Контакты' }}
                         </a>
                     </li>
                 </ul>
@@ -94,7 +94,7 @@
                     </a>
                     {% endif %}
                     <a href="{% url 'contacts:contact_us' %}" class="nav-link nav-cta">
-                        <i class="bi bi-calendar-check"></i> Записаться
+                        <i class="bi bi-calendar-check"></i> {{ common_phrases.book_appointment|default:'Записаться' }}
                     </a>
                 </div>
             </div>
@@ -126,9 +126,9 @@
             <div class="row">
                 <div class="col-lg-4 mb-4">
                     <div class="footer-logo">
-                        <i class="bi bi-heart-pulse"></i> ВетКлиника
+                        <i class="bi bi-heart-pulse"></i> {{ site_settings.site_title|default:'ВетКлиника' }}
                     </div>
-                    <p>Профессиональная ветеринарная помощь для ваших питомцев. Работаем с любовью к животным с 2010 года.</p>
+                    <p>{{ site_settings.footer_text|default:'Профессиональная ветеринарная помощь для ваших питомцев. Работаем с любовью к животным с 2010 года.' }}</p>
                     <div class="footer-social">
                         <a href="#"><i class="bi bi-telegram"></i></a>
                         <a href="#"><i class="bi bi-whatsapp"></i></a>
@@ -138,7 +138,7 @@
                 </div>
                 
                 <div class="col-lg-2 col-md-4 mb-4">
-                    <h5>Услуги</h5>
+                    <h5>{{ common_phrases.footer_services_title|default:'Услуги' }}</h5>
                     <ul>
                         <li><a href="{% url 'services:list' %}">Терапия</a></li>
                         <li><a href="{% url 'services:list' %}">Хирургия</a></li>
@@ -149,7 +149,7 @@
                 </div>
                 
                 <div class="col-lg-2 col-md-4 mb-4">
-                    <h5>Информация</h5>
+                    <h5>{{ common_phrases.footer_info_title|default:'Информация' }}</h5>
                     <ul>
                         <li><a href="{% url 'about:about' %}">О клинике</a></li>
                         <li><a href="{% url 'about:about' %}">Наши врачи</a></li>
@@ -160,7 +160,7 @@
                 </div>
                 
                 <div class="col-lg-4 col-md-4 mb-4">
-                    <h5>Контакты</h5>
+                    <h5>{{ common_phrases.footer_contacts_title|default:'Контакты' }}</h5>
                     <div class="footer-contact">
                         {% if contact_info %}
                         <p><i class="bi bi-geo-alt"></i> {{ contact_info.address }}</p>
@@ -173,16 +173,17 @@
                         <p><i class="bi bi-envelope"></i> <a href="mailto:info@vetclinic.ru">info@vetclinic.ru</a></p>
                         <p><i class="bi bi-clock"></i> Ежедневно: 9:00 - 21:00</p>
                         {% endif %}
-                        <p><i class="bi bi-clock-fill text-danger"></i> Экстренная помощь: 24/7</p>
+                        <p><i class="bi bi-clock-fill text-danger"></i> {{ common_phrases.emergency_help_short|default:'Экстренная помощь: 24/7' }}</p>
                     </div>
                 </div>
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2025 ВетКлиника. Все права защищены.</p>
+                <p>{{ site_settings.copyright_text|default:'&copy; 2025 ВетКлиника. Все права защищены.' }}</p>
             </div>
         </div>
     </footer>
+
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

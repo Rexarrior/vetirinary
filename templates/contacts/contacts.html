@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% load contact_filters %}
 
-{% block title %}Контакты - Ветеринарная клиника{% endblock %}
+{% block title %}{{ contacts_text.header_title|default:'Контакты' }} - {{ site_settings.site_title|default:'Ветеринарная
+клиника' }}{% endblock %}
 
 {% block content %}
 <!-- Page Header -->
@@ -9,11 +10,12 @@
     <div class="container">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-2">
-                <li class="breadcrumb-item"><a href="{% url 'home' %}">Главная</a></li>
-                <li class="breadcrumb-item active">Контакты</li>
+                <li class="breadcrumb-item"><a href="{% url 'home' %}">{{ common_phrases.nav_home|default:'Главная'
+                        }}</a></li>
+                <li class="breadcrumb-item active">{{ common_phrases.nav_contacts|default:'Контакты' }}</li>
             </ol>
         </nav>
-        <h1><i class="bi bi-geo-alt"></i> Контакты</h1>
+        <h1><i class="bi bi-geo-alt"></i> {{ contacts_text.header_title|default:'Контакты' }}</h1>
     </div>
 </section>
 
@@ -21,8 +23,8 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-5 mb-4 mb-lg-0">
-                <h2 class="mb-4">Свяжитесь с нами</h2>
-                
+                <h2 class="mb-4">{{ contacts_text.header_title|default:'Свяжитесь с нами' }}</h2>
+
                 {% if contact_info %}
                 <div class="contact-info-card mb-4">
                     <div class="contact-item">
@@ -30,93 +32,61 @@
                             <i class="bi bi-building"></i>
                         </div>
                         <div class="contact-content">
-                            <h4>Клиника</h4>
+                            <h4>{{ common_phrases.label_clinic|default:'Клиника' }}</h4>
                             <p>{{ contact_info.clinic_name }}</p>
                         </div>
                     </div>
-                    
+
                     <div class="contact-item">
                         <div class="contact-icon">
                             <i class="bi bi-geo-alt"></i>
                         </div>
                         <div class="contact-content">
-                            <h4>Адрес</h4>
+                            <h4>{{ common_phrases.label_address|default:'Адрес' }}</h4>
                             <p>{{ contact_info.address }}</p>
                         </div>
                     </div>
-                    
+
                     <div class="contact-item">
                         <div class="contact-icon">
                             <i class="bi bi-telephone"></i>
                         </div>
                         <div class="contact-content">
-                            <h4>Телефон</h4>
+                            <h4>{{ common_phrases.label_phone|default:'Телефон' }}</h4>
                             <a href="tel:{{ contact_info.phone|phone_url }}">{{ contact_info.phone }}</a>
                         </div>
                     </div>
-                    
+
                     <div class="contact-item">
                         <div class="contact-icon">
                             <i class="bi bi-envelope"></i>
                         </div>
                         <div class="contact-content">
-                            <h4>Email</h4>
+                            <h4>{{ common_phrases.label_email|default:'Email' }}</h4>
                             <a href="mailto:{{ contact_info.email }}">{{ contact_info.email }}</a>
                         </div>
                     </div>
-                    
+
                     <div class="contact-item">
                         <div class="contact-icon">
                             <i class="bi bi-clock"></i>
                         </div>
                         <div class="contact-content">
-                            <h4>Режим работы</h4>
+                            <h4>{{ common_phrases.label_working_hours|default:'Режим работы' }}</h4>
                             <p>{{ contact_info.working_hours }}</p>
                         </div>
                     </div>
                 </div>
-                {% else %}
-                <div class="contact-info-card mb-4">
-                    <div class="contact-item">
-                        <div class="contact-icon">
-                            <i class="bi bi-telephone"></i>
-                        </div>
-                        <div class="contact-content">
-                            <h4>Телефон</h4>
-                            <a href="tel:+78631234567">+7 (863) 123-45-67</a>
-                        </div>
-                    </div>
-                    
-                    <div class="contact-item">
-                        <div class="contact-icon">
-                            <i class="bi bi-envelope"></i>
-                        </div>
-                        <div class="contact-content">
-                            <h4>Email</h4>
-                            <a href="mailto:info@vetclinic.ru">info@vetclinic.ru</a>
-                        </div>
-                    </div>
-                    
-                    <div class="contact-item">
-                        <div class="contact-icon">
-                            <i class="bi bi-clock"></i>
-                        </div>
-                        <div class="contact-content">
-                            <h4>Режим работы</h4>
-                            <p>Ежедневно: 9:00 - 21:00<br>Экстренная помощь: 24/7</p>
-                        </div>
-                    </div>
-                </div>
                 {% endif %}
-                
+
                 <a href="{% url 'contacts:contact_us' %}" class="btn btn-primary btn-lg w-100">
-                    <i class="bi bi-envelope"></i> Написать нам
+                    <i class="bi bi-envelope"></i> {{ common_phrases.write_us_btn|default:'Написать нам' }}
                 </a>
             </div>
-            
+
             <div class="col-lg-7">
-                <h2 class="mb-4">Как нас найти</h2>
-                
+                <h2 class="mb-4">{{ common_phrases.how_to_find_us|default:'Как нас найти' }}</h2>
+
                 {% if contact_info.has_coordinates %}
                 <!-- Яндекс Карта через JavaScript API -->
                 <div id="yandex-map" class="map-container"></div>
@@ -129,20 +99,22 @@
                 <div class="map-container bg-light d-flex align-items-center justify-content-center">
                     <div class="text-center text-muted">
                         <i class="bi bi-map" style="font-size: 4rem;"></i>
-                        <p class="mt-2">Карта скоро появится</p>
+                        <p class="mt-2">{{ common_phrases.map_coming_soon|default:'Карта скоро появится' }}</p>
                     </div>
                 </div>
                 {% endif %}
-                
+
                 <div class="card mt-4">
                     <div class="card-body">
-                        <h5><i class="bi bi-signpost-2 text-primary"></i> Как добраться</h5>
-                        <p class="mb-2"><strong>На автобусе:</strong> остановка "улица Ленина"</p>
-                        <p class="mb-2"><strong>На автомобиле:</strong> бесплатная парковка у клиники</p>
+                        <h5><i class="bi bi-signpost-2 text-primary"></i> {{
+                            common_phrases.how_to_get_there|default:'Как добраться' }}</h5>
+                        <p class="mb-2"><strong>{{ common_phrases.by_bus|default:'На автобусе' }}:</strong> {{
+                            contacts_text.by_bus|default:'остановка "улица Ленина"' }}</p>
+                        <p class="mb-2"><strong>{{ common_phrases.by_car|default:'На автомобиле' }}:</strong> {{
+                            contacts_text.by_car|default:'бесплатная парковка у клиники' }}</p>
                         {% if contact_info %}
-                        <p class="mb-0"><strong>Адрес:</strong> {{ contact_info.address }}</p>
-                        {% else %}
-                        <p class="mb-0"><strong>Адрес:</strong> г. Константиновск, ул. Ленина, д. 42А</p>
+                        <p class="mb-0"><strong>{{ common_phrases.label_address|default:'Адрес' }}:</strong> {{
+                            contact_info.address }}</p>
                         {% endif %}
                     </div>
                 </div>
@@ -159,42 +131,42 @@
 <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
 <script type="text/javascript">
     ymaps.ready(initMap);
-    
+
     function initMap() {
         {% localize off %}
-        var coordinates = [{{ contact_info.latitude }}, {{ contact_info.longitude }}];
-        var zoom = {{ contact_info.map_zoom|default:16 }};
-        {% endlocalize %}
-        
-        var myMap = new ymaps.Map("yandex-map", {
-            center: coordinates,
-            zoom: zoom,
-            controls: ['zoomControl', 'fullscreenControl', 'geolocationControl']
-        });
-        
-        // Создаём метку с кастомным содержимым
-        var myPlacemark = new ymaps.Placemark(coordinates, {
-            hintContent: '{{ contact_info.clinic_name }}',
-            balloonContentHeader: '<strong style="font-size: 16px;">{{ contact_info.clinic_name }}</strong>',
-            balloonContentBody: 
-                '<div style="padding: 5px 0;">' +
-                '<p style="margin: 8px 0; font-size: 14px;">📍 {{ contact_info.address }}</p>' +
-                '<p style="margin: 8px 0; font-size: 14px;">📞 <a href="tel:{{ contact_info.phone|phone_url }}">{{ contact_info.phone }}</a></p>' +
-                '<p style="margin: 8px 0; font-size: 14px;">🕐 {{ contact_info.working_hours }}</p>' +
-                '</div>',
-            balloonContentFooter: '{% localize off %}<a href="https://yandex.ru/maps/?rtext=~{{ contact_info.latitude }},{{ contact_info.longitude }}" target="_blank" style="display: inline-block; padding: 8px 16px; background: #0891b2; color: white; text-decoration: none; border-radius: 6px; font-size: 13px;">🚗 Построить маршрут</a>{% endlocalize %}'
-        }, {
-            // Используем стандартный preset - красная медицинская иконка
-            preset: 'islands#redMedicalIcon'
-        });
-        
-        myMap.geoObjects.add(myPlacemark);
-        
-        // Открываем балун при загрузке
-        myPlacemark.balloon.open();
-        
-        // Отключаем скролл карты, чтобы не мешал прокрутке страницы
-        myMap.behaviors.disable('scrollZoom');
+        var coordinates = [{{ contact_info.latitude }}, { { contact_info.longitude } }];
+    var zoom = {{ contact_info.map_zoom|default: 16 }};
+    {% endlocalize %}
+
+    var myMap = new ymaps.Map("yandex-map", {
+        center: coordinates,
+        zoom: zoom,
+        controls: ['zoomControl', 'fullscreenControl', 'geolocationControl']
+    });
+
+    // Создаём метку с кастомным содержимым
+    var myPlacemark = new ymaps.Placemark(coordinates, {
+        hintContent: '{{ contact_info.clinic_name }}',
+        balloonContentHeader: '<strong style="font-size: 16px;">{{ contact_info.clinic_name }}</strong>',
+        balloonContentBody:
+            '<div style="padding: 5px 0;">' +
+            '<p style="margin: 8px 0; font-size: 14px;">📍 {{ contact_info.address }}</p>' +
+            '<p style="margin: 8px 0; font-size: 14px;">📞 <a href="tel:{{ contact_info.phone|phone_url }}">{{ contact_info.phone }}</a></p>' +
+            '<p style="margin: 8px 0; font-size: 14px;">🕐 {{ contact_info.working_hours }}</p>' +
+            '</div>',
+        balloonContentFooter: '{% localize off %}<a href="https://yandex.ru/maps/?rtext=~{{ contact_info.latitude }},{{ contact_info.longitude }}" target="_blank" style="display: inline-block; padding: 8px 16px; background: #0891b2; color: white; text-decoration: none; border-radius: 6px; font-size: 13px;">🚗 Построить маршрут</a>{% endlocalize %}'
+    }, {
+        // Используем стандартный preset - красная медицинская иконка
+        preset: 'islands#redMedicalIcon'
+    });
+
+    myMap.geoObjects.add(myPlacemark);
+
+    // Открываем балун при загрузке
+    myPlacemark.balloon.open();
+
+    // Отключаем скролл карты, чтобы не мешал прокрутке страницы
+    myMap.behaviors.disable('scrollZoom');
     }
 </script>
 {% endif %}

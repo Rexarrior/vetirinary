@@ -67,3 +67,15 @@ class ContactSubmission(models.Model):
     
     def __str__(self):
         return f"{self.name} - {self.subject}"
+class ContactsPageText(models.Model):
+    """Текстовые блоки для страницы 'Контакты'"""
+    header_title = models.CharField(max_length=200, default="Как нас найти", verbose_name="Заголовок страницы")
+    header_subtitle = models.TextField(default="Мы всегда на связи и готовы помочь вашим питомцам", verbose_name="Подзаголовок страницы")
+    form_title = models.CharField(max_length=200, default="Напишите нам", verbose_name="Заголовок формы")
+    
+    class Meta:
+        verbose_name = "Тексты страницы 'Контакты'"
+        verbose_name_plural = "Тексты страницы 'Контакты'"
+
+    def __str__(self):
+        return "Тексты страницы 'Контакты'"
