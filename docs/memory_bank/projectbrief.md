@@ -9,5 +9,6 @@
 ## Scope
 - **Frontend**: Responsive website with Home, News, About, and Contact pages.
 - **Backend**: Django-based system for content management and form handling.
-- **Features**: News listing/detail, veterinarian profiles, contact form, Yandex Maps integration.
-- **Future**: AI Chatbot integration, PostgreSQL migration, Dockerization, and CI/CD.
+- **Features**: News listing/detail, veterinarian profiles, contact form, Yandex Maps integration, AI Chatbot assistant.
+- **Infrastructure**: Dockerized environment with PostgreSQL, Nginx reverse proxy, and CI/CD via GitHub Actions.
+- **Content Management**: All frontend text is managed via Django Admin using a model-driven approach.
