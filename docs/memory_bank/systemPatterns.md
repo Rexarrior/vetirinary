@@ -1,7 +1,7 @@
 # System Patterns: Veterinary Clinic Website
 
 ## Architecture Overview
-The project follows the standard Django MVT (Model-View-Template) pattern.
+The project follows the standard Django MVT (Model-View-Template) pattern, augmented with Celery for asynchronous task processing.
 
 ## Component Breakdown
 - **`core/`**: Manages site-wide settings, common phrases, and homepage hero/stats.
@@ -11,6 +11,7 @@ The project follows the standard Django MVT (Model-View-Template) pattern.
 - **`services/`**: Manages service categories and individual services with pricing.
 - **`reviews/`**: Manages customer reviews and ratings.
 - **`chatbot/`**: (In development) Integration with LangChain and OpenAI for AI assistance.
+- **`ai_admin/`**: (Planned) Autonomous agent for database administration using Celery and multi-agent workflow.
 
 ## Design Patterns
 - **Django Admin**: Used for all content management.

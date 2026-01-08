@@ -52,6 +52,9 @@ INSTALLED_APPS = [
     "reviews",
     "chatbot",
     "core",
+    "django_celery_results",
+    "django_celery_beat",
+    "ai_admin",
 ]
 
 MIDDLEWARE = [
@@ -187,3 +190,11 @@ if not DEBUG:
         for host in os.getenv("ALLOWED_HOSTS", "").split(",") 
         if host.strip() and host.strip() not in ("localhost", "127.0.0.1")
     ]
+
+# Celery Configuration
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "redis://localhost:6379/0")
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE

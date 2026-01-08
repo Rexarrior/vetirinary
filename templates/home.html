@@ -442,7 +442,7 @@ hero_section.title|default:'Профессиональная помощь ваш
     function initHomeMap() {
         {% localize off %}
         var coordinates = [{{ contact_info.latitude }}, { { contact_info.longitude } }];
-    var zoom = {{ contact_info.map_zoom|default: 16 }};
+    var zoom = {{ contact_info.map_zoom|default:16 }};
     {% endlocalize %}
 
     var myMap = new ymaps.Map("yandex-map-home", {

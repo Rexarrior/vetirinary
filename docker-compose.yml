@@ -9,7 +9,7 @@ services:
       - POSTGRES_USER=${DB_USER:-vetclinic_user}
       - POSTGRES_PASSWORD=${DB_PASSWORD:-vetclinic_password}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-vetclinic_user} -d ${DB_NAME:-vetclinic}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER:-vetclinic_user} -d ${DB_NAME:-vetclinic}" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -26,18 +26,22 @@ services:
       - static_volume:/app/staticfiles
       - media_volume:/app/media
     environment:
-      - DEBUG=${DEBUG:-0}
+      - DEBUG=1
       - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
       - DB_NAME=${DB_NAME:-vetclinic}
       - DB_USER=${DB_USER:-vetclinic_user}
       - DB_PASSWORD=${DB_PASSWORD:-vetclinic_password}
       - DB_HOST=db
       - DB_PORT=5432
-      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-localhost,127.0.0.1}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-localhost,127.0.0.1,web}
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_started
     restart: unless-stopped
     networks:
       - vetclinic_network
@@ -50,9 +54,45 @@ services:
       - static_volume:/app/staticfiles:ro
       - media_volume:/app/media:ro
     ports:
-      - "80:80"
+      - "8021:80"
     depends_on:
       - web
+    restart: unless-stopped
+    networks:
+      - vetclinic_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: vetclinic_redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - vetclinic_network
+
+  celery:
+    build:
+      context: .
+      dockerfile: docker/django/Dockerfile
+    container_name: vetclinic_celery
+    command: celery -A clinic worker -l info
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
+      - DB_NAME=${DB_NAME:-vetclinic}
+      - DB_USER=${DB_USER:-vetclinic_user}
+      - DB_PASSWORD=${DB_PASSWORD:-vetclinic_password}
+      - DB_HOST=db
+      - DB_PORT=5432
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+    depends_on:
+      - db
+      - redis
     restart: unless-stopped
     networks:
       - vetclinic_network
@@ -62,7 +102,7 @@ volumes:
   static_volume:
   media_volume:
 
+
 networks:
   vetclinic_network:
     driver: bridge
-

@@ -5,8 +5,8 @@
 - **Database**: SQLite (Development), PostgreSQL (Planned for Production)
 - **Frontend**: HTML5, CSS3, Bootstrap 5, JavaScript
 - **Media Handling**: Pillow (for images)
-- **AI/LLM**: LangChain, OpenAI (Planned)
-- **Deployment**: Gunicorn, WhiteNoise, Docker (Planned)
+- **AI/LLM**: LangChain, OpenAI (Planned), Custom Agent Framework
+- **Deployment**: Gunicorn, WhiteNoise, Docker (Planned), Celery, Redis
 
 ## Development Setup
 - **Environment**: Python virtual environment (`venv`).
