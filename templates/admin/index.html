@@ -1,0 +1,19 @@
+{% extends "admin/index.html" %}
+{% load i18n %}
+
+{% block sidebar %}
+<div id="content-related">
+    <div class="module" id="recent-actions-module">
+        <h2>{% translate 'AI Administration' %}</h2>
+        <ul class="actionlist">
+            <li class="changelink">
+                <a href="{% url 'ai_admin:dashboard' %}"
+                    style="display: flex; align-items: center; gap: 10px; padding: 10px; background: #4f46e5; color: white; border-radius: 4px; text-decoration: none; font-weight: bold;">
+                    <span>🤖</span> {% translate 'Open AI Admin Dashboard' %}
+                </a>
+            </li>
+        </ul>
+    </div>
+    {{ block.super }}
+</div>
+{% endblock %}

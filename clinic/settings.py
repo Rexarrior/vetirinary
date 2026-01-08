@@ -34,6 +34,7 @@ SECRET_KEY = os.getenv(
 DEBUG = os.getenv("DEBUG", "1") == "1"
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "http://localhost:8021,http://127.0.0.1:8021").split(",")
 
 
 # Application definition
