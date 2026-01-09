@@ -26,25 +26,41 @@ def start_admin_task(task_log_id):
         analysis_agent = AnalysisAgent(task_log)
         result = analysis_agent.run()
         
-        if result != "proceed":
+        if result == "dialog_only":
+            task_log.status = 'completed' # Or 'dialog_only' if we want to distinguish
+            task_log.current_agent = 'Completed'
+            task_log.save()
+            logger.info(f"Task {task_log_id} completed as dialog only")
+            return
+        elif result != "proceed":
             logger.info(f"Task {task_log_id} halted by AnalysisAgent: {result}")
             return
 
         # 2. Admin Agent
-        task_log.status = 'executing'
-        task_log.current_agent = 'AdminAgent'
-        task_log.save()
+        # Status update is handled by AnalysisAgent or previous step, but we ensure it here
+        if task_log.status != 'executing':
+             task_log.status = 'executing'
+             task_log.current_agent = 'AdminAgent'
+             task_log.save()
         
         admin_agent = AdminAgent(task_log)
-        admin_agent.run()
+        result = admin_agent.run()
+        if result != "executed":
+            logger.info(f"Task {task_log_id} halted by AdminAgent: {result}")
+            return
 
         # 3. Control Agent
-        task_log.status = 'verifying'
-        task_log.current_agent = 'ControlAgent'
-        task_log.save()
+        # AdminAgent updates status to 'verifying', but we ensure it
+        if task_log.status != 'verifying':
+             task_log.status = 'verifying'
+             task_log.current_agent = 'ControlAgent'
+             task_log.save()
         
         control_agent = ControlAgent(task_log)
-        control_agent.run()
+        result = control_agent.run()
+        if result != "verified": # Assuming ControlAgent returns "verified" or "retry"
+             logger.info(f"Task {task_log_id} halted by ControlAgent: {result}")
+             return
 
         # 4. Description Agent
         task_log.status = 'reporting'

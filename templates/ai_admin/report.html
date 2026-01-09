@@ -1,15 +1,45 @@
-{% extends "base.html" %}
-
-{% block content %}
-<div class="container mt-5">
-    <div class="card">
-        <div class="card-header">
-            <h3>Task Report</h3>
-            <small class="text-muted">{{ report.created_at }}</small>
-        </div>
-        <div class="card-body">
-            {{ report.html_content|safe }}
-        </div>
+<div class="report-content">
+    <div class="report-header mb-4">
+        <h2>Task Report</h2>
+        <p class="text-muted">Generated on: {{ report.created_at }}</p>
+    </div>
+    <div class="report-body">
+        {{ report.html_content|safe }}
     </div>
 </div>
-{% endblock %}
+
+<style>
+    .report-content {
+        padding: 20px;
+        color: #333;
+        background: white;
+    }
+
+    .report-header {
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;
+    }
+
+    /* Ensure images and tables in report are responsive */
+    .report-body img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .report-body table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+    }
+
+    .report-body th,
+    .report-body td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    .report-body th {
+        background-color: #f8f9fa;
+    }
+</style>

@@ -1,4 +1,7 @@
+import json
 from .base import BaseAgent
+from ..llm import get_llm
+from langchain_core.messages import SystemMessage, HumanMessage
 from ..models import TaskReport
 from django.utils.text import slugify
 from django.utils import timezone
@@ -9,19 +12,38 @@ class DescriptionAgent(BaseAgent):
     """
     def run(self):
         self.log("Generating report...")
-        # TODO: Generate real HTML report
         
-        report_content = "<h1>Task Report</h1><p>Task completed successfully.</p>"
-        slug = slugify(f"task-{self.task_log.id}-{timezone.now().strftime('%Y%m%d-%H%M%S')}")
+        system_prompt = self.read_prompt('description', 'prompt')
+        llm = get_llm(temperature=0.0)
         
-        TaskReport.objects.create(
-            task=self.task_log,
-            slug=slug,
-            html_content=report_content
-        )
+        context = f"User Request: {self.task_log.user_request}\n\nLog:\n{self.task_log.result_summary}"
         
-        self.task_log.status = 'completed'
-        self.task_log.current_agent = 'ResponseAgent'
-        self.task_log.save()
+        messages = [
+            SystemMessage(content=system_prompt),
+            HumanMessage(content=context)
+        ]
         
-        return "reported"
+        try:
+            response = llm.invoke(messages)
+            report_content = response.content
+            
+            # Clean up markdown code blocks if present
+            if "```html" in report_content:
+                report_content = report_content.split("```html")[1].split("```")[0].strip()
+            elif "```" in report_content:
+                report_content = report_content.split("```")[1].split("```")[0].strip()
+            
+            slug = slugify(f"task-{self.task_log.id}-{timezone.now().strftime('%Y%m%d-%H%M%S')}")
+            
+            TaskReport.objects.create(
+                task=self.task_log,
+                slug=slug,
+                html_content=report_content
+            )
+            
+            return "reported"
+
+        except Exception as e:
+            self.log(f"Error generating report: {str(e)}")
+            self.update_task_log(status='failed', error_message=str(e))
+            return "failed"

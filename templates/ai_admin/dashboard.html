@@ -341,7 +341,7 @@
             <button class="close-btn" onclick="closeModal()">&times;</button>
         </div>
         <div class="modal-body">
-            <iframe class="modal-iframe" id="reportFrame"></iframe>
+            <div id="reportContent" style="height: 100%; overflow-y: auto;"></div>
         </div>
     </div>
 </div>
@@ -541,37 +541,31 @@
     }
 
     async function openReport(taskId) {
-        // We need to get the slug for the report. For now, let's assume we can get it or construct it.
-        // Ideally, the status API should return the report slug if available.
-        // Let's try to fetch the report slug first or just try to open it if we know the pattern.
-        // Since we don't have the slug in the task list, let's fetch status again to get it (if we update the API)
-        // OR, we can just assume the report exists and try to find it.
+        try {
+            const response = await fetch(`/ai-admin/task/${taskId}/status/`);
+            const data = await response.json();
 
-        // Better approach: Update the status API to return the report slug.
-        // For now, let's just show the modal and try to load it.
+            if (data.report_slug) {
+                const reportResponse = await fetch(`/ai-admin/report/${data.report_slug}/`);
+                if (!reportResponse.ok) throw new Error('Failed to load report');
 
-        // Wait, the report slug is random. We need to get it from the backend.
-        // Let's update the API to return the report slug.
+                const reportHtml = await reportResponse.text();
+                const container = document.getElementById('reportContent');
+                container.innerHTML = reportHtml;
 
-        // Temporary fix: Try to fetch the report by task ID (we might need a new endpoint or update existing)
-        // Let's assume the report view can also take a task_id or we update the status API.
-
-        // I will update the status API in the next step to include report_slug.
-        const response = await fetch(`/ai-admin/task/${taskId}/status/`);
-        const data = await response.json();
-
-        if (data.report_slug) {
-            const frame = document.getElementById('reportFrame');
-            frame.src = `/ai-admin/report/${data.report_slug}/`;
-            document.getElementById('reportModal').style.display = 'flex';
-        } else {
-            alert('Report not generated yet.');
+                document.getElementById('reportModal').style.display = 'flex';
+            } else {
+                alert('Report not generated yet.');
+            }
+        } catch (error) {
+            console.error('Error opening report:', error);
+            alert('Failed to load report. See console for details.');
         }
     }
 
     function closeModal() {
         document.getElementById('reportModal').style.display = 'none';
-        document.getElementById('reportFrame').src = '';
+        document.getElementById('reportContent').innerHTML = '';
     }
 </script>
 {% endblock %}
