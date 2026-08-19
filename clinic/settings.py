@@ -53,9 +53,6 @@ INSTALLED_APPS = [
     "reviews",
     "chatbot",
     "core",
-    "django_celery_results",
-    "django_celery_beat",
-    "ai_admin",
 ]
 
 MIDDLEWARE = [
@@ -170,8 +167,17 @@ MEDIA_ROOT = BASE_DIR / "media"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-# OpenRouter API Configuration for AI Chatbot
+# NOOA chatbot configuration (OpenAI-compatible provider)
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
+NOOA_CHATBOT_MODEL = os.getenv(
+    "NOOA_CHATBOT_MODEL", "openai/z-ai/glm-4.5-air:free"
+)
+NOOA_CHATBOT_API_BASE = os.getenv(
+    "NOOA_CHATBOT_API_BASE", "https://openrouter.ai/api/v1"
+)
+NOOA_CHATBOT_TIMEOUT_SECONDS = float(
+    os.getenv("NOOA_CHATBOT_TIMEOUT_SECONDS", "60")
+)
 
 
 # Security settings for production
@@ -191,11 +197,3 @@ if not DEBUG:
         for host in os.getenv("ALLOWED_HOSTS", "").split(",") 
         if host.strip() and host.strip() not in ("localhost", "127.0.0.1")
     ]
-
-# Celery Configuration
-CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
-CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "redis://localhost:6379/0")
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = TIME_ZONE

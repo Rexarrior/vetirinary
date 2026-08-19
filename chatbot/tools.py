@@ -1,12 +1,8 @@
-"""
-Custom tools for the veterinary clinic AI assistant.
-"""
+"""Bounded read-only data sources for the veterinary clinic assistant."""
 
-from langchain.tools import tool
 from ddgs import DDGS
 
 
-@tool
 def get_clinic_info() -> str:
     """
     Получить информацию о ветеринарной клинике: адрес, телефон, email, часы работы.
@@ -27,11 +23,10 @@ def get_clinic_info() -> str:
 - Часы работы: {contact.working_hours}
 """
         return "Контактная информация временно недоступна. Пожалуйста, попробуйте позже."
-    except Exception as e:
-        return f"Не удалось получить контактную информацию: {str(e)}"
+    except Exception:
+        return "Не удалось получить контактную информацию."
 
 
-@tool
 def get_services_list() -> str:
     """
     Получить список услуг и цен ветеринарной клиники.
@@ -61,11 +56,10 @@ def get_services_list() -> str:
         
         result += "Для полного списка услуг посетите раздел 'Услуги и цены' на нашем сайте."
         return result
-    except Exception as e:
-        return f"Не удалось получить список услуг: {str(e)}"
+    except Exception:
+        return "Не удалось получить список услуг."
 
 
-@tool
 def get_veterinarians() -> str:
     """
     Получить информацию о ветеринарах клиники.
@@ -92,11 +86,10 @@ def get_veterinarians() -> str:
             result += "\n"
         
         return result
-    except Exception as e:
-        return f"Не удалось получить информацию о врачах: {str(e)}"
+    except Exception:
+        return "Не удалось получить информацию о врачах."
 
 
-@tool
 def search_veterinary_info(query: str) -> str:
     """
     Поиск информации по ветеринарным темам в интернете.
@@ -179,4 +172,3 @@ def search_veterinary_info(query: str) -> str:
 Но я могу помочь:
 • Ответить на вопросы о клинике и услугах
 • Дать общие советы по уходу за питомцами"""
-

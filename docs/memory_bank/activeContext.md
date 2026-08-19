@@ -1,10 +1,9 @@
 # Active Context: Veterinary Clinic Website
 
 ## Current Task
-- Verifying the full AI Admin workflow.
+- Maintain the public veterinary assistant and clinic website.
 
 ## Status
-- **AI Admin Dashboard:** Fully implemented.
-- **Agents:** Analysis, Admin, Control, Description, Response agents are all implemented.
-- **Infrastructure:** Task workflow in `tasks.py` is updated.
-- **Next Steps:** Run full end-to-end tests and deploy.
+- **Public Chatbot:** Implemented with NVIDIA NOOA.
+- **Data Access:** Bounded read-only readers for public contacts, services, and veterinarians.
+- **Content Management:** Performed by staff through Django Admin.

@@ -7,7 +7,12 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
-from .agent import chat
+
+def chat(user_message, chat_history=None):
+    """Load the relatively heavy NOOA runtime only when chat is used."""
+    from .agent import chat as run_chat
+
+    return run_chat(user_message, chat_history)
 
 
 @csrf_exempt

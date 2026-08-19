@@ -10,14 +10,16 @@ A Django-based website for a small veterinary clinic with news, contacts, and co
 - Contact page with clinic information and Yandex Maps integration
 - Contact form for sending messages
 - Admin panel for content management
+- Public veterinary chat assistant powered by NVIDIA NOOA
 - Responsive design for mobile devices
 
 ## Technology Stack
 
-- **Backend**: Django (Python)
+- **Backend**: Django (Python 3.12)
 - **Database**: SQLite (for development)
 - **Frontend**: HTML5, CSS3, Bootstrap 5, JavaScript
 - **Admin Interface**: Django Admin
+- **AI**: NVIDIA NOOA with an OpenAI-compatible LLM provider
 
 ## Setup Instructions
 
@@ -29,7 +31,7 @@ A Django-based website for a small veterinary clinic with news, contacts, and co
 
 2. **Create and activate a virtual environment**
    ```bash
-   python -m venv venv
+   python3.12 -m venv venv
    # On Windows
    venv\Scripts\activate
    # On macOS/Linux
@@ -44,6 +46,13 @@ A Django-based website for a small veterinary clinic with news, contacts, and co
 4. **Run migrations**
    ```bash
    python manage.py migrate
+   ```
+
+   To enable the chat assistant, configure an OpenAI-compatible provider:
+   ```bash
+   export OPENROUTER_API_KEY=your-api-key
+   export NOOA_CHATBOT_MODEL=openai/your-model
+   export NOOA_CHATBOT_API_BASE=https://provider.example/v1
    ```
 
 5. **Create a superuser (admin)**
@@ -68,6 +77,7 @@ veterinary-clinic/
 ├── news/                # News management app
 ├── contacts/            # Contacts and forms app
 ├── about/               # About page content app
+├── chatbot/             # Public read-only NOOA assistant
 ├── templates/           # HTML templates
 ├── static/              # CSS, JS, images
 ├── media/               # User uploaded content
@@ -83,6 +93,10 @@ The Django admin panel allows you to manage:
 - About page content
 - Veterinarian profiles
 - Contact form submissions
+
+Content management is intentionally performed through Django Admin. The public
+chat assistant can read only bounded public clinic information and has no tools
+for creating, updating, or deleting database records.
 
 ## Development
 

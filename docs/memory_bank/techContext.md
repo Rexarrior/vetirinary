@@ -1,12 +1,12 @@
 # Technical Context: Veterinary Clinic Website
 
 ## Technology Stack
-- **Backend**: Django 5.2.8 (Python)
+- **Backend**: Django 5.2.8 (Python 3.12)
 - **Database**: SQLite (Development), PostgreSQL (Planned for Production)
 - **Frontend**: HTML5, CSS3, Bootstrap 5, JavaScript
 - **Media Handling**: Pillow (for images)
-- **AI/LLM**: LangChain, OpenAI (Planned), Custom Agent Framework
-- **Deployment**: Gunicorn, WhiteNoise, Docker (Planned), Celery, Redis
+- **AI/LLM**: NVIDIA NOOA, OpenAI-compatible provider
+- **Deployment**: Gunicorn, WhiteNoise, Docker
 
 ## Development Setup
 - **Environment**: Python virtual environment (`venv`).

@@ -357,7 +357,7 @@ Stage 3: Deployment with GitHub Actions
 ### Docker Configuration Created
 
 **Files Created:**
-- `docker/django/Dockerfile` - Django container with Python 3.11, Gunicorn
+- `docker/django/Dockerfile` - Django container with Python 3.12, Gunicorn
 - `docker/nginx/Dockerfile` - Nginx reverse proxy
 - `docker/nginx/nginx.conf` - Nginx configuration for static files and proxy
 - `docker-compose.yml` - Main orchestration file
@@ -538,7 +538,7 @@ Added an AI-powered chat assistant widget available on all website pages. The as
 ### Technology Stack
 
 - **LLM**: z-ai/glm-4.5-air:free via OpenRouter API
-- **Framework**: LangChain + LangGraph for agentic capabilities
+- **Framework**: NVIDIA NOOA with typed planning and response generation
 - **Search**: DuckDuckGo Search (restricted to veterinary topics)
 - **Frontend**: Vanilla JavaScript chat widget with session storage
 
@@ -547,7 +547,7 @@ Added an AI-powered chat assistant widget available on all website pages. The as
 **New Django App: `chatbot/`**
 - `chatbot/prompts.py` - System prompts with restrictions
 - `chatbot/tools.py` - Custom tools for clinic data and search
-- `chatbot/agent.py` - LangChain/LangGraph agent configuration
+- `chatbot/agent.py` - NOOA agent, bounded context planning, and response generation
 - `chatbot/views.py` - API endpoint for chat
 - `chatbot/urls.py` - URL routing
 
@@ -559,7 +559,7 @@ Added an AI-powered chat assistant widget available on all website pages. The as
 - `templates/base.html` - Include widget on all pages
 - `clinic/settings.py` - Add chatbot app and OpenRouter config
 - `clinic/urls.py` - Add API route `/api/chatbot/chat/`
-- `requirements.txt` - Add langchain, langchain-openai, duckduckgo-search
+- `requirements.txt` - Add nooa and ddgs
 
 ### Configuration
 
@@ -579,7 +579,7 @@ Get your API key at: https://openrouter.ai/keys
    - Quick action buttons for common questions
 
 2. **AI Capabilities**
-   - Access to clinic database (contacts, services, veterinarians)
+   - Bounded read-only access to public clinic information (contacts, services, veterinarians)
    - DuckDuckGo search for veterinary topics
    - Strict topic restrictions (veterinary only)
    - Critical analysis of search results

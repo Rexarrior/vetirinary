@@ -35,13 +35,11 @@ services:
       - DB_PORT=5432
       - ALLOWED_HOSTS=${ALLOWED_HOSTS:-localhost,127.0.0.1,web}
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - NOOA_CHATBOT_MODEL=${NOOA_CHATBOT_MODEL:-openai/z-ai/glm-4.5-air:free}
+      - NOOA_CHATBOT_API_BASE=${NOOA_CHATBOT_API_BASE:-https://openrouter.ai/api/v1}
     depends_on:
       db:
         condition: service_healthy
-      redis:
-        condition: service_started
     restart: unless-stopped
     networks:
       - vetclinic_network
@@ -57,42 +55,6 @@ services:
       - "8021:80"
     depends_on:
       - web
-    restart: unless-stopped
-    networks:
-      - vetclinic_network
-
-  redis:
-    image: redis:7-alpine
-    container_name: vetclinic_redis
-    ports:
-      - "6379:6379"
-    restart: unless-stopped
-    networks:
-      - vetclinic_network
-
-  celery:
-    build:
-      context: .
-      dockerfile: docker/django/Dockerfile
-    container_name: vetclinic_celery
-    command: celery -A clinic worker -l info
-    volumes:
-      - static_volume:/app/staticfiles
-      - media_volume:/app/media
-    environment:
-      - DEBUG=1
-      - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
-      - DB_NAME=${DB_NAME:-vetclinic}
-      - DB_USER=${DB_USER:-vetclinic_user}
-      - DB_PASSWORD=${DB_PASSWORD:-vetclinic_password}
-      - DB_HOST=db
-      - DB_PORT=5432
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
-      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
-    depends_on:
-      - db
-      - redis
     restart: unless-stopped
     networks:
       - vetclinic_network
