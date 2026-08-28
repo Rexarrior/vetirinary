@@ -5,6 +5,10 @@ on:
     branches: [main]
   workflow_dispatch:  # Allow manual trigger
 
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -70,36 +74,94 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
-            set -e
+            set -eu
             
             echo "📦 Pulling latest code..."
             cd /opt/vetclinic
+            PREVIOUS_COMMIT=$(git rev-parse HEAD)
             git fetch origin main
             git reset --hard origin/main
+
+            if docker compose version >/dev/null 2>&1; then
+              COMPOSE="docker compose -f docker-compose.prod.yml"
+            else
+              COMPOSE="docker-compose -f docker-compose.prod.yml"
+            fi
             
             echo "🔧 Updating environment..."
             if [ -f .env.prod ]; then
               cp .env.prod .env
             fi
-            
-            echo "🐳 Rebuilding containers..."
-            docker-compose -f docker-compose.prod.yml down
-            docker-compose -f docker-compose.prod.yml build --no-cache web
-            docker-compose -f docker-compose.prod.yml up -d
-            
-            echo "⏳ Waiting for services to start..."
-            sleep 10
-            
-            echo "🗄️ Running migrations..."
-            docker-compose -f docker-compose.prod.yml exec -T web python manage.py migrate --noinput
-            
-            echo "📁 Collecting static files..."
-            docker-compose -f docker-compose.prod.yml exec -T web python manage.py collectstatic --noinput
-            
-            echo "🧹 Cleaning up old images..."
-            docker image prune -f
-            
-            echo "✅ Deployment completed successfully!"
+
+            wait_for_healthy() {
+              service="$1"
+              container="$2"
+              attempts=0
+
+              while [ "$attempts" -lt 24 ]; do
+                status=$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}' "$container" 2>/dev/null || true)
+
+                if [ "$status" = "healthy" ]; then
+                  echo "✅ $service is healthy"
+                  return 0
+                fi
+
+                if [ "$status" = "unhealthy" ] || [ "$status" = "exited" ]; then
+                  echo "❌ $service entered $status state"
+                  $COMPOSE logs --tail=100 "$service" || true
+                  return 1
+                fi
+
+                attempts=$((attempts + 1))
+                sleep 5
+              done
+
+              echo "❌ Timed out waiting for $service"
+              $COMPOSE logs --tail=100 "$service" || true
+              return 1
+            }
+
+            verify_release() {
+              wait_for_healthy db vetclinic_db || return 1
+              wait_for_healthy web vetclinic_web || return 1
+              wait_for_healthy nginx vetclinic_nginx || return 1
+              $COMPOSE exec -T nginx wget -q -O - http://127.0.0.1/ready/ | grep -q '"status": "ok"' || return 1
+            }
+
+            deploy_release() {
+              echo "🐳 Building replacement images while the current release keeps running..."
+              $COMPOSE build web nginx || return 1
+
+              echo "🚀 Starting the new release and removing obsolete services..."
+              $COMPOSE up -d --remove-orphans || return 1
+
+              echo "⏳ Waiting for database, Django and nginx readiness..."
+              verify_release || return 1
+            }
+
+            rollback_release() {
+              echo "↩️ Rolling back to $PREVIOUS_COMMIT..."
+              git reset --hard "$PREVIOUS_COMMIT"
+
+              if [ -f .env.prod ]; then
+                cp .env.prod .env
+              fi
+
+              $COMPOSE build web nginx || return 1
+              $COMPOSE up -d --remove-orphans || return 1
+              verify_release || return 1
+              echo "✅ Previous release restored"
+            }
+
+            if deploy_release; then
+              echo "🧹 Cleaning up old images..."
+              docker image prune -f
+              echo "✅ Deployment completed successfully!"
+            else
+              echo "❌ New release failed readiness checks"
+              rollback_release
+              exit 1
+            fi
             
       - name: Notify on success
         if: success()
