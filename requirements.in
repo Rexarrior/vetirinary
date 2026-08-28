@@ -1,7 +1,7 @@
 # Web application
 Django==5.2.17
 pillow==12.3.0
-tzdata==2025.2
+tzdata==2026.3
 sqlparse==0.6.0
 
 # Production runtime
