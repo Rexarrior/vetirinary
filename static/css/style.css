@@ -241,6 +241,7 @@ a:hover {
 
 .hero-section .lead {
     font-size: 1.25rem;
+    color: rgba(255, 255, 255, 0.95);
     opacity: 0.95;
     margin-bottom: 2rem;
     max-width: 600px;

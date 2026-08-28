@@ -1,8 +1,7 @@
 {% extends 'base.html' %}
 {% load contact_filters %}
 
-{% block title %}{{ contacts_text.header_title|default:'Контакты' }} - {{ site_settings.site_title|default:'Ветеринарная
-клиника' }}{% endblock %}
+{% block title %}{{ contacts_text.header_title|default:'Контакты' }} - {{ site_settings.site_title|default:'Ветеринарная клиника' }}{% endblock %}
 
 {% block content %}
 <!-- Page Header -->
@@ -10,8 +9,7 @@
     <div class="container">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-2">
-                <li class="breadcrumb-item"><a href="{% url 'home' %}">{{ common_phrases.nav_home|default:'Главная'
-                        }}</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'home' %}">{{ common_phrases.nav_home|default:'Главная' }}</a></li>
                 <li class="breadcrumb-item active">{{ common_phrases.nav_contacts|default:'Контакты' }}</li>
             </ol>
         </nav>
@@ -106,15 +104,11 @@
 
                 <div class="card mt-4">
                     <div class="card-body">
-                        <h5><i class="bi bi-signpost-2 text-primary"></i> {{
-                            common_phrases.how_to_get_there|default:'Как добраться' }}</h5>
-                        <p class="mb-2"><strong>{{ common_phrases.by_bus|default:'На автобусе' }}:</strong> {{
-                            contacts_text.by_bus|default:'остановка "улица Ленина"' }}</p>
-                        <p class="mb-2"><strong>{{ common_phrases.by_car|default:'На автомобиле' }}:</strong> {{
-                            contacts_text.by_car|default:'бесплатная парковка у клиники' }}</p>
+                        <h5><i class="bi bi-signpost-2 text-primary"></i> {{ common_phrases.how_to_get_there|default:'Как добраться' }}</h5>
+                        <p class="mb-2"><strong>{{ common_phrases.by_bus|default:'На автобусе' }}:</strong> {{ contacts_text.by_bus|default:'остановка "улица Ленина"' }}</p>
+                        <p class="mb-2"><strong>{{ common_phrases.by_car|default:'На автомобиле' }}:</strong> {{ contacts_text.by_car|default:'бесплатная парковка у клиники' }}</p>
                         {% if contact_info %}
-                        <p class="mb-0"><strong>{{ common_phrases.label_address|default:'Адрес' }}:</strong> {{
-                            contact_info.address }}</p>
+                        <p class="mb-0"><strong>{{ common_phrases.label_address|default:'Адрес' }}:</strong> {{ contact_info.address }}</p>
                         {% endif %}
                     </div>
                 </div>
@@ -134,9 +128,9 @@
 
     function initMap() {
         {% localize off %}
-        var coordinates = [{{ contact_info.latitude }}, { { contact_info.longitude } }];
-    var zoom = {{ contact_info.map_zoom|default: 16 }};
-    {% endlocalize %}
+        var coordinates = [{{ contact_info.latitude }}, {{ contact_info.longitude }}];
+        var zoom = {{ contact_info.map_zoom|default:16 }};
+        {% endlocalize %}
 
     var myMap = new ymaps.Map("yandex-map", {
         center: coordinates,

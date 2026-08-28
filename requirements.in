@@ -1,0 +1,15 @@
+# Web application
+Django==5.2.17
+pillow==12.3.0
+tzdata==2025.2
+sqlparse==0.6.0
+
+# Production runtime
+gunicorn==26.2.0
+psycopg[binary]==3.3.4
+python-dotenv==1.2.3
+whitenoise==6.7.0
+
+# Public AI assistant
+nooa==0.0.9
+ddgs==9.16.0

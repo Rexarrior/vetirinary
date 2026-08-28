@@ -7,6 +7,5 @@ register = template.Library()
 def phone_url(phone):
     """Преобразует телефон в формат для tel: ссылки (убирает пробелы, скобки, дефисы)"""
     if not phone:
-        return ''
-    return phone.replace(' ', '').replace('(', '').replace(')', '').replace('-', '')
-
+        return ""
+    return phone.replace(" ", "").replace("(", "").replace(")", "").replace("-", "")

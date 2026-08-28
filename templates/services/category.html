@@ -8,10 +8,8 @@
     <div class="container">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-2">
-                <li class="breadcrumb-item"><a href="{% url 'home' %}">{{ common_phrases.nav_home|default:'Главная'
-                        }}</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'services:list' %}">{{
-                        common_phrases.nav_services|default:'Услуги' }}</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'home' %}">{{ common_phrases.nav_home|default:'Главная' }}</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'services:list' %}">{{ common_phrases.nav_services|default:'Услуги' }}</a></li>
                 <li class="breadcrumb-item active">{{ category.name }}</li>
             </ol>
         </nav>
@@ -36,8 +34,7 @@
                     <span class="price-name">
                         {{ service.name }}
                         {% if service.is_popular %}
-                        <span class="badge bg-accent text-white ms-2">{{
-                            common_phrases.popular_badge|default:'Популярно' }}</span>
+                        <span class="badge bg-accent text-white ms-2">{{ common_phrases.popular_badge|default:'Популярно' }}</span>
                         {% endif %}
                     </span>
                     {% if service.description %}

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from threading import BoundedSemaphore
 from typing import Any
 
 from asgiref.sync import async_to_sync, sync_to_async
@@ -23,6 +24,7 @@ from .tools import (
 )
 
 logger = logging.getLogger(__name__)
+_chat_slots = BoundedSemaphore(settings.NOOA_CHATBOT_MAX_CONCURRENT_REQUESTS)
 
 
 class ChatPlan(BaseModel):
@@ -33,17 +35,11 @@ class ChatPlan(BaseModel):
     use_clinic_info: bool = Field(
         description="Whether contact details or opening hours are needed."
     )
-    use_services: bool = Field(
-        description="Whether the clinic service and price list is needed."
-    )
-    use_veterinarians: bool = Field(
-        description="Whether public veterinarian profiles are needed."
-    )
+    use_services: bool = Field(description="Whether the clinic service and price list is needed.")
+    use_veterinarians: bool = Field(description="Whether public veterinarian profiles are needed.")
     web_search_query: str | None = Field(
         default=None,
-        description=(
-            "A veterinary-only web search query, or null when web search is unnecessary."
-        ),
+        description=("A veterinary-only web search query, or null when web search is unnecessary."),
         max_length=300,
     )
 
@@ -121,17 +117,11 @@ async def _collect_sources(plan: ChatPlan) -> dict[str, str]:
     """Execute the approved, bounded read-only lookups."""
     sources: dict[str, str] = {}
     if plan.use_clinic_info:
-        sources["clinic"] = await sync_to_async(
-            get_clinic_info, thread_sensitive=True
-        )()
+        sources["clinic"] = await sync_to_async(get_clinic_info, thread_sensitive=True)()
     if plan.use_services:
-        sources["services"] = await sync_to_async(
-            get_services_list, thread_sensitive=True
-        )()
+        sources["services"] = await sync_to_async(get_services_list, thread_sensitive=True)()
     if plan.use_veterinarians:
-        sources["veterinarians"] = await sync_to_async(
-            get_veterinarians, thread_sensitive=True
-        )()
+        sources["veterinarians"] = await sync_to_async(get_veterinarians, thread_sensitive=True)()
     if plan.web_search_query:
         sources["web_search"] = await asyncio.to_thread(
             search_veterinary_info, plan.web_search_query
@@ -143,28 +133,32 @@ async def _chat_async(
     user_message: str,
     chat_history: list[dict[str, str]] | None = None,
 ) -> str:
-    history = _normalize_history(chat_history)
-    llm = get_llm()
-    try:
-        agent = VeterinaryChatAgent(
-            llm=llm,
-            context={
-                "clinic_policy": SYSTEM_PROMPT,
-                "search_policy": SEARCH_RESTRICTION_PROMPT,
-            },
-        )
-        plan = await agent.plan_context(message=user_message, history=history)
-        sources = await _collect_sources(plan)
-        return await agent.compose_response(
-            message=user_message,
-            history=history,
-            plan=plan,
-            sources=sources,
-        )
-    finally:
-        close = getattr(llm, "aclose", None)
-        if close is not None:
-            await close()
+    async with asyncio.timeout(settings.NOOA_CHATBOT_TOTAL_TIMEOUT_SECONDS):
+        history = _normalize_history(chat_history)
+        llm = get_llm()
+        try:
+            agent = VeterinaryChatAgent(
+                llm=llm,
+                context={
+                    "clinic_policy": SYSTEM_PROMPT,
+                    "search_policy": SEARCH_RESTRICTION_PROMPT,
+                },
+            )
+            plan = await agent.plan_context(message=user_message, history=history)
+            sources = await _collect_sources(plan)
+            response = await agent.compose_response(
+                message=user_message,
+                history=history,
+                plan=plan,
+                sources=sources,
+            )
+            if not isinstance(response, str) or not response.strip():
+                raise RuntimeError("NOOA chatbot returned an invalid response")
+            return response.strip()
+        finally:
+            close = getattr(llm, "aclose", None)
+            if close is not None:
+                await close()
 
 
 def chat(
@@ -172,18 +166,25 @@ def chat(
     chat_history: list[dict[str, str]] | None = None,
 ) -> str:
     """Process one synchronous Django request through the NOOA agent."""
+    if not _chat_slots.acquire(blocking=False):
+        logger.warning("NOOA chatbot concurrency limit reached")
+        return "Ассистент занят. Пожалуйста, попробуйте ещё раз через минуту."
+
     try:
-        return async_to_sync(_chat_async)(user_message, chat_history)
-    except RuntimeError as exc:
-        if "OPENROUTER_API_KEY" in str(exc):
-            return (
-                "Ассистент временно недоступен. "
-                "Пожалуйста, свяжитесь с нами по телефону."
-            )
-        logger.exception("NOOA chatbot runtime error")
-    except Exception:
-        logger.exception("NOOA chatbot request failed")
-    return (
-        "Извините, произошла ошибка. Пожалуйста, попробуйте позже "
-        "или свяжитесь с нами по телефону."
-    )
+        try:
+            return async_to_sync(_chat_async)(user_message, chat_history)
+        except TimeoutError:
+            logger.warning("NOOA chatbot request timed out")
+            return "Ассистент не успел ответить. Пожалуйста, попробуйте ещё раз."
+        except RuntimeError as exc:
+            if "OPENROUTER_API_KEY" in str(exc):
+                return "Ассистент временно недоступен. Пожалуйста, свяжитесь с нами по телефону."
+            logger.exception("NOOA chatbot runtime error")
+        except Exception:
+            logger.exception("NOOA chatbot request failed")
+        return (
+            "Извините, произошла ошибка. Пожалуйста, попробуйте позже "
+            "или свяжитесь с нами по телефону."
+        )
+    finally:
+        _chat_slots.release()

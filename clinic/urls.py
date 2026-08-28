@@ -5,7 +5,6 @@ from django.urls import include, path
 
 from . import health, views
 
-
 urlpatterns = [
     path("ready/", health.readiness, name="readiness"),
     path("admin/", admin.site.urls),

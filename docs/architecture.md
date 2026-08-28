@@ -1,202 +1,84 @@
-# Veterinary Clinic Website Architecture Plan
+# Архитектура сайта ветеринарной клиники
 
-## Project Overview
+## Обзор
 
-This document outlines the architecture for a small veterinary clinic website with the following key features:
-- Public website with news, contacts, and contact form
-- Admin panel for content management (Django admin)
-- Docker-based deployment with Django + PostgreSQL
-- Nginx as a standalone reverse proxy
-- Responsive, modern design for mobile devices
+Проект — монолитное Django-приложение с серверным рендерингом HTML. Публичный сайт,
+административная панель и API чат-ассистента работают в одном процессе приложения.
+В production перед Django стоят Gunicorn и Nginx, постоянные данные хранятся в
+PostgreSQL.
 
-## 1. Project Structure
-
-```
-veterinary-clinic/
-├── docs/                    # Documentation
-├── src/                     # Source code
-│   ├── backend/             # Django application
-│   │   ├── core/            # Site-wide settings and common phrases
-│   │   ├── clinic/          # Main Django project
-│   │   ├── news/            # News management app
-│   │   ├── contacts/        # Contacts and forms app
-│   │   ├── about/           # About page content app
-│   │   ├── services/        # Services and pricing app
-│   │   ├── reviews/         # Customer reviews app
-│   │   └── manage.py        # Django management script
-│   └── frontend/            # Frontend assets
-│       ├── templates/       # HTML templates
-│       ├── static/          # CSS, JS, images
-│       └── media/           # User uploaded content
-├── docker/                  # Docker configurations
-│   ├── django/              # Django Dockerfile
-│   └── postgres/            # PostgreSQL initialization
-├── nginx/                   # Nginx configuration
-├── docker-compose.yml       # Docker Compose configuration
-└── README.md                # Project documentation
+```mermaid
+flowchart LR
+    Visitor[Посетитель] --> Nginx
+    Editor[Редактор] --> Nginx
+    Nginx --> Django[Django + Gunicorn]
+    Django --> PostgreSQL[(PostgreSQL)]
+    Django --> Static[Static и media volumes]
+    Django --> NOOA[NOOA agent]
+    NOOA --> LLM[OpenAI-compatible provider]
+    NOOA --> Readers[Read-only clinic readers]
+    Readers --> PostgreSQL
 ```
 
-## 2. Technology Stack
+## Django-приложения
 
-- **Backend**: Django (Python)
-- **Database**: PostgreSQL
-- **Frontend**: HTML5, CSS3 (Bootstrap 5), JavaScript
-- **Deployment**: Docker Compose
-- **Web Server**: Nginx (standalone)
-- **Admin Interface**: Django Admin
+| Модуль | Ответственность |
+|---|---|
+| `clinic` | настройки, корневые URL, health/readiness endpoints |
+| `core` | главная страница и общие настройки сайта |
+| `about` | информация о клинике, преимущества и врачи |
+| `services` | категории услуг, цены и публичный каталог |
+| `news` | публикации и страницы новостей |
+| `reviews` | модерируемые отзывы |
+| `contacts` | контакты, карта и обращения посетителей |
+| `chatbot` | публичный чат и NOOA orchestration |
 
-## 3. Database Schema
+Редакторы меняют содержимое через Django Admin. Публичные views показывают только
+активные или опубликованные записи, где соответствующая модель поддерживает такой
+статус.
 
-### Core Models (Site-wide)
-```python
-# core/models.py
-class SiteSettings(models.Model):
-    site_title = models.CharField(max_length=100)
-    meta_description = models.TextField()
-    footer_text = models.TextField()
-    copyright_text = models.CharField(max_length=200)
+## Чат-ассистент
 
-class CommonPhrase(models.Model):
-    key = models.SlugField(unique=True)
-    text = models.TextField()
+Endpoint `/api/chatbot/chat/` принимает JSON только методом POST и защищён CSRF.
+До обращения к LLM применяются лимиты размера сообщения, истории, частоты и
+параллелизма. Общий timeout ограничивает стоимость зависшего запроса. Агрегированные
+счётчики запросов, исходов и суммарного времени сохраняются в Django cache без IP,
+сообщений и других персональных данных.
 
-class HeroSection(models.Model):
-    title = models.CharField(max_length=200)
-    subtitle = models.TextField()
-    button_text = models.CharField(max_length=50)
+NOOA сначала формирует структурированный `ChatPlan`, затем выполняет только выбранные
+источники и составляет ответ. В агент не передаются ORM-модели или универсальный
+Python/SQL executor. Доступны только функции чтения контактов, услуг и публичных
+профилей врачей, а также тематически ограниченный web search. Автотест перехватывает
+SQL этих функций и допускает только `SELECT`.
 
-class StatItem(models.Model):
-    label = models.CharField(max_length=100)
-    value = models.CharField(max_length=50)
-    icon = models.CharField(max_length=50)
-```
+История диалога хранится в `sessionStorage` браузера и передаётся на каждый запрос;
+сервер не создаёт отдельное хранилище переписки и не логирует сообщения или IP.
 
-### News Models
-```python
-# news/models.py
-class News(models.Model):
-    title = models.CharField(max_length=200)
-    content = models.TextField()
-    image = models.ImageField(upload_to='news/', blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    is_published = models.BooleanField(default=True)
+## Данные и файлы
 
-class NewsPageText(models.Model):
-    header_title = models.CharField(max_length=200)
-    header_subtitle = models.TextField()
-```
+- SQLite используется локально, если `DB_HOST` не задан.
+- PostgreSQL 15 используется в Docker и CI.
+- `media` содержит загруженные изображения и подключается как persistent volume.
+- `staticfiles` создаётся `collectstatic` и раздаётся Nginx/WhiteNoise.
+- Production rate-limit использует ограниченный file-based Django cache; один web
+  container является текущей поддерживаемой топологией.
 
-### Contact Models
-```python
-# contacts/models.py
-class ContactInfo(models.Model):
-    clinic_name = models.CharField(max_length=100)
-    address = models.CharField(max_length=200)
-    phone = models.CharField(max_length=20)
-    email = models.EmailField()
-    working_hours = models.CharField(max_length=200)
-    latitude = models.DecimalField(max_digits=9, decimal_places=6)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6)
-    map_zoom = models.IntegerField(default=16)
+## Deployment
 
-class ContactSubmission(models.Model):
-    name = models.CharField(max_length=100)
-    email = models.EmailField()
-    phone = models.CharField(max_length=20, blank=True)
-    subject = models.CharField(max_length=200)
-    message = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+`docker-compose.prod.yml` запускает PostgreSQL, Django/Gunicorn и Nginx. Readiness
+проверяет БД и HTTP endpoint `/ready/`. Workflow deployment собирает новую версию,
+ждёт health checks и при неуспехе возвращает предыдущий commit и образы.
 
-class ContactsPageText(models.Model):
-    header_title = models.CharField(max_length=200)
-    by_bus = models.TextField()
-    by_car = models.TextField()
-```
+CI выполняет Ruff, Django checks, миграции, тесты, dependency audit и Docker build.
+CodeQL запускается для `main`, pull requests и по расписанию. Все сторонние GitHub
+Actions закреплены на commit SHA, а Dependabot предлагает обновления Python-пакетов
+и workflow actions.
 
-### About Models
-```python
-# about/models.py
-class AboutPageText(models.Model):
-    header_title = models.CharField(max_length=200)
-    about_title = models.CharField(max_length=200)
-    about_description = models.TextField()
+## Границы безопасности
 
-class FeatureItem(models.Model):
-    title = models.CharField(max_length=100)
-    description = models.TextField()
-    icon = models.CharField(max_length=50)
-
-class Veterinarian(models.Model):
-    name = models.CharField(max_length=100)
-    position = models.CharField(max_length=100)
-    bio = models.TextField()
-    photo = models.ImageField(upload_to='vets/', blank=True, null=True)
-    order = models.IntegerField(default=0)
-```
-
-### Services Models
-```python
-# services/models.py
-class ServiceCategory(models.Model):
-    name = models.CharField(max_length=100)
-    icon = models.CharField(max_length=50)
-
-class Service(models.Model):
-    category = models.ForeignKey(ServiceCategory, on_照顾=models.CASCADE)
-    name = models.CharField(max_length=100)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    is_popular = models.BooleanField(default=False)
-
-class ServicesPageText(models.Model):
-    header_title = models.CharField(max_length=200)
-    header_subtitle = models.TextField()
-```
-
-### Reviews Models
-```python
-# reviews/models.py
-class Review(models.Model):
-    author = models.CharField(max_length=100)
-    rating = models.IntegerField()
-    text = models.TextField()
-    is_published = models.BooleanField(default=False)
-
-class ReviewsPageText(models.Model):
-    header_title = models.CharField(max_length=200)
-    header_subtitle = models.TextField()
-```
-
-## 4. Django Admin Configuration
-
-The Django admin is the primary tool for content management.
-- **Singleton Models**: Page-specific text models (e.g., `AboutPageText`, `SiteSettings`) are restricted to a single instance.
-- **Rich Text**: `TextField`s are used for content that may require formatting.
-- **Image Management**: Support for uploading news images, vet photos, etc.
-- **Ordering**: Veterinarians and other list items can be ordered manually.
-
-## 5. Docker Configuration
-
-(Refer to `docker-compose.yml` and `docker/` directory for details)
-- **Django Container**: Runs Gunicorn, handles application logic.
-- **PostgreSQL Container**: Stores all persistent data.
-- **Nginx Container**: Serves as a reverse proxy and static file server.
-
-## 6. Nginx Configuration
-
-(Refer to `docker/nginx/nginx.conf` for details)
-- Handles SSL termination (in production).
-- Serves static and media files directly.
-- Proxies application requests to Gunicorn.
-
-## 7. Frontend Structure
-
-- **Base Template**: `base.html` contains the header, navigation, and footer.
-- **Context Processor**: `site_content` provides `site_settings` and `common_phrases` to all templates.
-- **Responsive Design**: Built with Bootstrap 5 and custom CSS.
-
-## 8. Deployment Architecture
-
-(Refer to `docs/implementation-stages.md` for deployment details)
-- CI/CD via GitHub Actions.
-- Deployment to VPS via SSH and Docker Compose.
+- секреты поступают только через environment/GitHub Secrets;
+- production требует HTTPS, secure cookies, HSTS и явный `ALLOWED_HOSTS`;
+- чат не может изменять базу;
+- Nginx ограничивает размер тела и частоту запросов на внешнем периметре, Django
+  повторно валидирует chatbot payload;
+- сообщения об уязвимостях принимаются по правилам из `SECURITY.md`.

@@ -1,121 +1,132 @@
-# Veterinary Clinic Website
+# Сайт ветеринарной клиники
 
-A Django-based website for a small veterinary clinic with news, contacts, and content management features.
+[![CI](https://github.com/Rexarrior/vetirinary/actions/workflows/ci.yml/badge.svg)](https://github.com/Rexarrior/vetirinary/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/Rexarrior/vetirinary/actions/workflows/codeql.yml/badge.svg)](https://github.com/Rexarrior/vetirinary/actions/workflows/codeql.yml)
+[![Deploy](https://github.com/Rexarrior/vetirinary/actions/workflows/deploy.yml/badge.svg)](https://github.com/Rexarrior/vetirinary/actions/workflows/deploy.yml)
 
-## Features
+Сайт небольшой ветеринарной клиники на Django. Публичная часть показывает услуги,
+врачей, новости, отзывы и контакты; контент редактируется через Django Admin. На всех
+страницах доступен русскоязычный справочный чат-ассистент на NVIDIA NOOA.
 
-- Home page with clinic information and latest news
-- News section with listing and detail pages
-- About page with clinic information and veterinarian profiles
-- Contact page with clinic information and Yandex Maps integration
-- Contact form for sending messages
-- Admin panel for content management
-- Public veterinary chat assistant powered by NVIDIA NOOA
-- Responsive design for mobile devices
+![Главная страница сайта](docs/images/homepage.jpg)
 
-## Technology Stack
+## Возможности
 
-- **Backend**: Django (Python 3.12)
-- **Database**: SQLite (for development)
-- **Frontend**: HTML5, CSS3, Bootstrap 5, JavaScript
-- **Admin Interface**: Django Admin
-- **AI**: NVIDIA NOOA with an OpenAI-compatible LLM provider
+- страницы клиники, услуг и цен, врачей, новостей, отзывов и контактов;
+- форма обратной связи и карта;
+- управление контентом через Django Admin;
+- адаптивная вёрстка на Bootstrap 5;
+- публичный чат-ассистент с ограниченными read-only источниками данных;
+- PostgreSQL, Gunicorn и Nginx в Docker Compose;
+- CI, проверка зависимостей, CodeQL и автоматический production deploy с rollback.
 
-## Setup Instructions
+Чат не ставит диагнозы и не назначает лечение. Он не получает инструментов для
+создания, изменения или удаления записей в базе данных.
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd veterinary-clinic
-   ```
+## Быстрый запуск через Docker
 
-2. **Create and activate a virtual environment**
-   ```bash
-   python3.12 -m venv venv
-   # On Windows
-   venv\Scripts\activate
-   # On macOS/Linux
-   source venv/bin/activate
-   ```
+Понадобятся Docker и Docker Compose.
 
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Run migrations**
-   ```bash
-   python manage.py migrate
-   ```
-
-   To enable the chat assistant, configure an OpenAI-compatible provider:
-   ```bash
-   export OPENROUTER_API_KEY=your-api-key
-   export NOOA_CHATBOT_MODEL=openai/your-model
-   export NOOA_CHATBOT_API_BASE=https://provider.example/v1
-   ```
-
-5. **Create a superuser (admin)**
-   ```bash
-   python manage.py createsuperuser
-   ```
-
-6. **Run the development server**
-   ```bash
-   python manage.py runserver
-   ```
-
-7. **Access the application**
-   - Website: http://127.0.0.1:8000/
-   - Admin panel: http://127.0.0.1:8000/admin/
-
-## Project Structure
-
-```
-veterinary-clinic/
-├── clinic/              # Main Django project settings
-├── news/                # News management app
-├── contacts/            # Contacts and forms app
-├── about/               # About page content app
-├── chatbot/             # Public read-only NOOA assistant
-├── templates/           # HTML templates
-├── static/              # CSS, JS, images
-├── media/               # User uploaded content
-├── requirements.txt     # Python dependencies
-└── manage.py            # Django management script
+```bash
+git clone https://github.com/Rexarrior/vetirinary.git
+cd vetirinary
+cp .env.example .env
+docker compose up --build
 ```
 
-## Admin Panel
+Сайт откроется на <http://127.0.0.1:8021/>, админка — на
+<http://127.0.0.1:8021/admin/>. Для остановки выполните `docker compose down`.
 
-The Django admin panel allows you to manage:
-- News articles
-- Contact information
-- About page content
-- Veterinarian profiles
-- Contact form submissions
+Создать администратора в запущенном контейнере:
 
-Content management is intentionally performed through Django Admin. The public
-chat assistant can read only bounded public clinic information and has no tools
-for creating, updating, or deleting database records.
+```bash
+docker compose exec web python manage.py createsuperuser
+```
 
-## Development
+API-ключ нужен только для работы чата. Остальной сайт запускается без него.
 
-To access the admin panel:
-1. Run the development server
-2. Navigate to http://127.0.0.1:8000/admin/
-3. Log in with the superuser credentials created during setup
+## Локальная разработка
 
-## Deployment Stages
+Требуется Python 3.12. PostgreSQL нужен только при разработке в окружении, близком к
+production; по умолчанию проект использует SQLite. Зависимости зафиксированы вместе
+с транзитивными пакетами и хешами.
 
-This project is designed to be implemented in three stages:
+```bash
+python3.12 -m venv venv
+source venv/bin/activate
+python -m pip install --require-hashes -r requirements-dev.txt
+cp .env.example .env
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+```
 
-1. **Stage 1**: Design, frontend and backend with SQLite (Current stage)
-2. **Stage 2**: Docker Compose with PostgreSQL
-3. **Stage 3**: Deployment with GitHub Actions
+Для локального SQLite можно не задавать `DB_HOST`. Для PostgreSQL задайте `DB_HOST`,
+`DB_NAME`, `DB_USER`, `DB_PASSWORD` и `DB_PORT`.
 
-See [docs/implementation-stages.md](docs/implementation-stages.md) for detailed implementation stages.
+## Настройки окружения
 
-## Documentation
+| Переменная | Назначение | Значение по умолчанию |
+|---|---|---|
+| `SECRET_KEY` | секрет Django; в production обязателен | небезопасное dev-значение |
+| `DEBUG` | режим отладки (`1` или `0`) | `1` |
+| `ALLOWED_HOSTS` | разрешённые хосты через запятую | `localhost,127.0.0.1` |
+| `DB_HOST` | включает PostgreSQL; без него используется SQLite | пусто |
+| `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_PORT` | подключение к PostgreSQL | см. `.env.example` |
+| `OPENROUTER_API_KEY` | ключ OpenAI-совместимого LLM-провайдера | пусто |
+| `NOOA_CHATBOT_MODEL` | модель в формате NOOA registry | `openai/z-ai/glm-4.5-air:free` |
+| `NOOA_CHATBOT_API_BASE` | OpenAI-совместимый API endpoint | OpenRouter API |
+| `NOOA_CHATBOT_TIMEOUT_SECONDS` | timeout одного вызова провайдера | `30` |
+| `NOOA_CHATBOT_TOTAL_TIMEOUT_SECONDS` | общий бюджет запроса чата | `45` |
+| `NOOA_CHATBOT_MAX_CONCURRENT_REQUESTS` | одновременные запросы к агенту на процесс | `2` |
+| `CHATBOT_RATE_LIMIT_REQUESTS` | запросы одного клиента за окно | `10` |
+| `CHATBOT_RATE_LIMIT_WINDOW_SECONDS` | окно rate limit в секундах | `60` |
 
-- [Architecture Plan](docs/architecture.md)
-- [Implementation Stages](docs/implementation-stages.md)
+Не коммитьте `.env`, API-ключи, пароли и production-дампы.
+
+## Проверки
+
+```bash
+ruff check .
+ruff format --check .
+python manage.py check
+python manage.py test
+pip-audit --no-deps --disable-pip -r requirements.txt
+```
+
+Тесты покрывают публичные страницы, административный доступ, фильтрацию
+опубликованного контента, формы и защитные сценарии чат-ассистента. Отдельный тест
+перехватывает SQL инструментов ассистента и допускает только `SELECT`.
+
+## Структура
+
+```text
+clinic/             настройки и URL Django-проекта
+core/               глобальные настройки и главная страница
+about/              информация о клинике и врачах
+services/           категории услуг и цены
+news/               новости
+reviews/            отзывы
+contacts/           контакты и обращения
+chatbot/            публичный NOOA-ассистент
+templates/          Django-шаблоны
+static/             CSS, JavaScript и изображения
+docker/             образы Django и Nginx
+.github/workflows/  CI, CodeQL и deployment
+```
+
+Подробнее: [архитектура](docs/architecture.md),
+[этапы реализации](docs/implementation-stages.md),
+[правила участия](CONTRIBUTING.md) и [политика безопасности](SECURITY.md).
+
+## Production
+
+Production-конфигурация находится в `docker-compose.prod.yml`. GitHub Actions
+проверяет lint, форматирование, тесты и зависимости, затем разворачивает `main` на
+сервере через SSH. Release считается успешным только после readiness-проверок;
+неуспешный release автоматически откатывается на предыдущий commit.
+
+## Лицензия
+
+Лицензия проекта пока не выбрана. До появления файла `LICENSE` все права на код
+сохраняются за владельцем репозитория.

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 import os
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -26,15 +27,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv(
-    "SECRET_KEY",
-    "django-insecure-5du_*i#+uwt0nx$(!q5iroqb86#j_f$o#m5z!bu84(1z)c#lr$"
+    "SECRET_KEY", "django-insecure-5du_*i#+uwt0nx$(!q5iroqb86#j_f$o#m5z!bu84(1z)c#lr$"
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "1") == "1"
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
-CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "http://localhost:8021,http://127.0.0.1:8021").split(",")
+CSRF_TRUSTED_ORIGINS = os.getenv(
+    "CSRF_TRUSTED_ORIGINS", "http://localhost:8021,http://127.0.0.1:8021"
+).split(",")
 
 
 # Application definition
@@ -169,15 +171,35 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # NOOA chatbot configuration (OpenAI-compatible provider)
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
-NOOA_CHATBOT_MODEL = os.getenv(
-    "NOOA_CHATBOT_MODEL", "openai/z-ai/glm-4.5-air:free"
-)
-NOOA_CHATBOT_API_BASE = os.getenv(
-    "NOOA_CHATBOT_API_BASE", "https://openrouter.ai/api/v1"
-)
-NOOA_CHATBOT_TIMEOUT_SECONDS = float(
-    os.getenv("NOOA_CHATBOT_TIMEOUT_SECONDS", "60")
-)
+NOOA_CHATBOT_MODEL = os.getenv("NOOA_CHATBOT_MODEL", "openai/z-ai/glm-4.5-air:free")
+NOOA_CHATBOT_API_BASE = os.getenv("NOOA_CHATBOT_API_BASE", "https://openrouter.ai/api/v1")
+NOOA_CHATBOT_TIMEOUT_SECONDS = float(os.getenv("NOOA_CHATBOT_TIMEOUT_SECONDS", "30"))
+NOOA_CHATBOT_TOTAL_TIMEOUT_SECONDS = float(os.getenv("NOOA_CHATBOT_TOTAL_TIMEOUT_SECONDS", "45"))
+NOOA_CHATBOT_MAX_CONCURRENT_REQUESTS = int(os.getenv("NOOA_CHATBOT_MAX_CONCURRENT_REQUESTS", "2"))
+CHATBOT_RATE_LIMIT_REQUESTS = int(os.getenv("CHATBOT_RATE_LIMIT_REQUESTS", "10"))
+CHATBOT_RATE_LIMIT_WINDOW_SECONDS = int(os.getenv("CHATBOT_RATE_LIMIT_WINDOW_SECONDS", "60"))
+CHATBOT_MAX_MESSAGE_LENGTH = int(os.getenv("CHATBOT_MAX_MESSAGE_LENGTH", "2000"))
+CHATBOT_MAX_HISTORY_ITEMS = int(os.getenv("CHATBOT_MAX_HISTORY_ITEMS", "20"))
+CHATBOT_MAX_HISTORY_CHARACTERS = int(os.getenv("CHATBOT_MAX_HISTORY_CHARACTERS", "12000"))
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.getenv("DATA_UPLOAD_MAX_MEMORY_SIZE", str(32 * 1024)))
+
+if DEBUG:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "vetclinic-development",
+        }
+    }
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+            "LOCATION": os.getenv("CHATBOT_CACHE_LOCATION", "/tmp/vetclinic-chatbot-cache"),
+            "TIMEOUT": CHATBOT_RATE_LIMIT_WINDOW_SECONDS,
+            "OPTIONS": {"MAX_ENTRIES": 10000},
+        }
+    }
 
 
 # Security settings for production
@@ -187,13 +209,13 @@ if not DEBUG:
     X_FRAME_OPTIONS = "DENY"
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_SECURE = True
-    
+
     # Trust the X-Forwarded-Proto header from reverse proxy
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-    
+
     # CSRF trusted origins (for HTTPS behind proxy)
     CSRF_TRUSTED_ORIGINS = [
-        f"https://{host.strip()}" 
-        for host in os.getenv("ALLOWED_HOSTS", "").split(",") 
+        f"https://{host.strip()}"
+        for host in os.getenv("ALLOWED_HOSTS", "").split(",")
         if host.strip() and host.strip() not in ("localhost", "127.0.0.1")
     ]

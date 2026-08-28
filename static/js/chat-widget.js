@@ -183,21 +183,27 @@ class VetChatWidget {
             content: msg.text
         }));
         
+        let requestTimeout = null;
         try {
             this.isLoading = true;
             this.sendBtn.disabled = true;
-            
+
+            const controller = new AbortController();
+            requestTimeout = window.setTimeout(() => controller.abort(), 50000);
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
             const response = await fetch(this.apiUrl, {
                 method: 'POST',
+                credentials: 'same-origin',
+                signal: controller.signal,
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
                 },
                 body: JSON.stringify({
                     message: text,
                     history: history
                 })
             });
-            
             const data = await response.json();
             
             this.hideTyping();
@@ -213,6 +219,9 @@ class VetChatWidget {
             this.hideTyping();
             this.addMessage('Не удалось отправить сообщение. Проверьте подключение к интернету.', 'error');
         } finally {
+            if (requestTimeout !== null) {
+                window.clearTimeout(requestTimeout);
+            }
             this.isLoading = false;
             this.sendBtn.disabled = false;
             this.inputField.focus();

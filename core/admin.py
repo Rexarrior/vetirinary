@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import SiteSettings, CommonPhrase, HeroSection, StatItem
+
+from .models import CommonPhrase, HeroSection, SiteSettings, StatItem
+
 
 @admin.register(SiteSettings)
 class SiteSettingsAdmin(admin.ModelAdmin):
@@ -9,10 +11,12 @@ class SiteSettingsAdmin(admin.ModelAdmin):
             return False
         return super().has_add_permission(request)
 
+
 @admin.register(CommonPhrase)
 class CommonPhraseAdmin(admin.ModelAdmin):
-    list_display = ('key', 'text', 'description')
-    search_fields = ('key', 'text')
+    list_display = ("key", "text", "description")
+    search_fields = ("key", "text")
+
 
 @admin.register(HeroSection)
 class HeroSectionAdmin(admin.ModelAdmin):
@@ -21,7 +25,8 @@ class HeroSectionAdmin(admin.ModelAdmin):
             return False
         return super().has_add_permission(request)
 
+
 @admin.register(StatItem)
 class StatItemAdmin(admin.ModelAdmin):
-    list_display = ('number', 'label', 'order')
-    list_editable = ('order',)
+    list_display = ("number", "label", "order")
+    list_editable = ("order",)

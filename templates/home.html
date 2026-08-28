@@ -2,8 +2,7 @@
 {% load static %}
 {% load contact_filters %}
 
-{% block title %}{{ site_settings.site_title|default:'Ветеринарная клиника' }} - {{
-hero_section.title|default:'Профессиональная помощь вашим питомцам' }}{% endblock %}
+{% block title %}{{ site_settings.site_title|default:'Ветеринарная клиника' }} - {{ hero_section.title|default:'Профессиональная помощь вашим питомцам' }}{% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
@@ -13,8 +12,7 @@ hero_section.title|default:'Профессиональная помощь ваш
             <div class="col-lg-7 hero-content">
                 <div class="hero-badges">
                     <span class="hero-badge">
-                        <i class="bi bi-geo-alt"></i> {{ hero_section.badge_location|default:'Ветеринарная клиника в
-                        Константиновске' }}
+                        <i class="bi bi-geo-alt"></i> {{ hero_section.badge_location|default:'Ветеринарная клиника в Константиновске' }}
                     </span>
                     <span class="hero-badge">
                         <i class="bi bi-clock"></i> {{ hero_section.badge_work_hours|default:'Работаем 24/7' }}
@@ -24,12 +22,10 @@ hero_section.title|default:'Профессиональная помощь ваш
                     </span>
                 </div>
                 <h1>{{ hero_section.title|default:'Забота о здоровье ваших питомцев — наша миссия' }}</h1>
-                <p class="lead">{{ hero_section.lead_text|default:'Современная ветеринарная клиника с опытными
-                    специалистами и передовым оборудованием. Мы лечим с любовью!' }}</p>
+                <p class="lead">{{ hero_section.lead_text|default:'Современная ветеринарная клиника с опытными специалистами и передовым оборудованием. Мы лечим с любовью!' }}</p>
                 <div class="d-flex gap-3 flex-wrap">
                     <a href="{% url 'contacts:contact_us' %}" class="btn btn-accent btn-lg">
-                        <i class="bi bi-calendar-check"></i> {{ hero_section.button_primary_text|default:'Записаться на
-                        приём' }}
+                        <i class="bi bi-calendar-check"></i> {{ hero_section.button_primary_text|default:'Записаться на приём' }}
                     </a>
                     <a href="{% url 'services:list' %}" class="btn btn-white btn-lg">
                         <i class="bi bi-grid"></i> {{ hero_section.button_secondary_text|default:'Наши услуги' }}
@@ -88,8 +84,7 @@ hero_section.title|default:'Профессиональная помощь ваш
     <div class="container">
         <div class="section-header">
             <h2>{{ common_phrases.services_title|default:'Наши услуги' }}</h2>
-            <p>{{ common_phrases.services_subtitle|default:'Полный спектр ветеринарных услуг для здоровья и благополучия
-                ваших питомцев' }}</p>
+            <p>{{ common_phrases.services_subtitle|default:'Полный спектр ветеринарных услуг для здоровья и благополучия ваших питомцев' }}</p>
         </div>
 
         <div class="row g-4">
@@ -101,8 +96,7 @@ hero_section.title|default:'Профессиональная помощь ваш
                     <h4>Терапия</h4>
                     <p class="card-text">Диагностика и лечение заболеваний внутренних органов с использованием
                         современных методов</p>
-                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">{{
-                        common_phrases.more_details|default:'Подробнее' }}</a>
+                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">{{ common_phrases.more_details|default:'Подробнее' }}</a>
                 </div>
             </div>
 
@@ -113,8 +107,7 @@ hero_section.title|default:'Профессиональная помощь ваш
                     </div>
                     <h4>Хирургия</h4>
                     <p class="card-text">Плановые и экстренные операции любой сложности в оборудованной операционной</p>
-                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">{{
-                        common_phrases.more_details|default:'Подробнее' }}</a>
+                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">{{ common_phrases.more_details|default:'Подробнее' }}</a>
                 </div>
             </div>
 
@@ -125,8 +118,7 @@ hero_section.title|default:'Профессиональная помощь ваш
                     </div>
                     <h4>Вакцинация</h4>
                     <p class="card-text">Защита питомцев от опасных инфекций качественными вакцинами по схеме</p>
-                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">{{
-                        common_phrases.more_details|default:'Подробнее' }}</a>
+                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">{{ common_phrases.more_details|default:'Подробнее' }}</a>
                 </div>
             </div>
 
@@ -138,8 +130,7 @@ hero_section.title|default:'Профессиональная помощь ваш
                     <h4>Диагностика</h4>
                     <p class="card-text">УЗИ, рентген, лабораторные анализы — точная диагностика для правильного лечения
                     </p>
-                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">{{
-                        common_phrases.more_details|default:'Подробнее' }}</a>
+                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">{{ common_phrases.more_details|default:'Подробнее' }}</a>
                 </div>
             </div>
 
@@ -150,8 +141,7 @@ hero_section.title|default:'Профессиональная помощь ваш
                     </div>
                     <h4>Стоматология</h4>
                     <p class="card-text">Чистка зубов, удаление зубного камня, лечение заболеваний полости рта</p>
-                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">{{
-                        common_phrases.more_details|default:'Подробнее' }}</a>
+                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">{{ common_phrases.more_details|default:'Подробнее' }}</a>
                 </div>
             </div>
 
@@ -163,8 +153,7 @@ hero_section.title|default:'Профессиональная помощь ваш
                     <h4>Стационар</h4>
                     <p class="card-text">Круглосуточное наблюдение и уход за питомцами после операций и при тяжёлых
                         состояниях</p>
-                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">{{
-                        common_phrases.more_details|default:'Подробнее' }}</a>
+                    <a href="{% url 'services:list' %}" class="btn btn-outline-primary">{{ common_phrases.more_details|default:'Подробнее' }}</a>
                 </div>
             </div>
         </div>
@@ -183,8 +172,7 @@ hero_section.title|default:'Профессиональная помощь ваш
         <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0">
                 <h2>{{ about_text.header_title|default:'Почему выбирают нас?' }}</h2>
-                <p class="text-muted mb-4">{{ about_text.header_subtitle|default:'Мы создали клинику, в которую хотели
-                    бы обратиться сами. Здесь каждый питомец получает внимание и заботу.' }}</p>
+                <p class="text-muted mb-4">{{ about_text.header_subtitle|default:'Мы создали клинику, в которую хотели бы обратиться сами. Здесь каждый питомец получает внимание и заботу.' }}</p>
 
                 {% if features %}
                 {% for feature in features %}
@@ -243,8 +231,7 @@ hero_section.title|default:'Профессиональная помощь ваш
 
             <div class="col-lg-6">
                 <div class="appointment-form">
-                    <h3><i class="bi bi-calendar-check text-primary"></i> {{
-                        common_phrases.appointment_form_title|default:'Запись на приём' }}</h3>
+                    <h3><i class="bi bi-calendar-check text-primary"></i> {{ common_phrases.appointment_form_title|default:'Запись на приём' }}</h3>
                     <form action="{% url 'contacts:contact_us' %}" method="get">
                         <div class="mb-3">
                             <label class="form-label">{{ common_phrases.label_name|default:'Ваше имя' }}</label>
@@ -291,8 +278,7 @@ hero_section.title|default:'Профессиональная помощь ваш
     <div class="container">
         <div class="section-header">
             <h2>{{ common_phrases.news_title|default:'Новости клиники' }}</h2>
-            <p>{{ common_phrases.news_subtitle|default:'Актуальная информация о жизни клиники и полезные советы для
-                владельцев' }}</p>
+            <p>{{ common_phrases.news_subtitle|default:'Актуальная информация о жизни клиники и полезные советы для владельцев' }}</p>
         </div>
 
         <div class="row g-4">
@@ -337,8 +323,7 @@ hero_section.title|default:'Профессиональная помощь ваш
 <section class="cta-section">
     <div class="container">
         <h2>{{ common_phrases.cta_title|default:'Нужна консультация?' }}</h2>
-        <p>{{ common_phrases.cta_subtitle|default:'Позвоните нам или оставьте заявку — мы свяжемся с вами в течение 15
-            минут' }}</p>
+        <p>{{ common_phrases.cta_subtitle|default:'Позвоните нам или оставьте заявку — мы свяжемся с вами в течение 15 минут' }}</p>
         <div class="d-flex gap-3 justify-content-center flex-wrap">
             {% if contact_info %}
             <a href="tel:{{ contact_info.phone|phone_url }}" class="btn btn-white btn-lg">
@@ -441,7 +426,7 @@ hero_section.title|default:'Профессиональная помощь ваш
 
     function initHomeMap() {
         {% localize off %}
-        var coordinates = [{{ contact_info.latitude }}, { { contact_info.longitude } }];
+        var coordinates = [{{ contact_info.latitude }}, {{ contact_info.longitude }}];
     var zoom = {{ contact_info.map_zoom|default:16 }};
     {% endlocalize %}
 
