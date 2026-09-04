@@ -6,7 +6,7 @@ sqlparse==0.6.0
 
 # Production runtime
 gunicorn==26.2.0
-psycopg[binary]==3.3.4
+psycopg[binary]==3.3.5
 python-dotenv==1.2.3
 whitenoise==6.7.0
 
